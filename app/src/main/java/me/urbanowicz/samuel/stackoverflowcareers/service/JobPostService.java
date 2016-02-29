@@ -2,6 +2,8 @@ package me.urbanowicz.samuel.stackoverflowcareers.service;
 
 import com.google.gson.JsonElement;
 
+import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPost;
+import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPostsFeed;
 import retrofit.Call;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
@@ -22,6 +24,9 @@ public class JobPostService {
     }
 
     public Call<JsonElement> getJobPostsFeed() {
-        return jobPostFeedApi.getJobPosts();
+        return jobPostFeedApi.getJobPostsJsonCall();
+    }
+    public Call<JobPostsFeed> getJobPostFeed() {
+        return jobPostFeedApi.getJobPostFeedCall();
     }
 }

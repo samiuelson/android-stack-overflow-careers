@@ -1,4 +1,4 @@
-package me.urbanowicz.samuel.stackoverflowcareers.view;
+package me.urbanowicz.samuel.stackoverflowcareers.view.detail;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;

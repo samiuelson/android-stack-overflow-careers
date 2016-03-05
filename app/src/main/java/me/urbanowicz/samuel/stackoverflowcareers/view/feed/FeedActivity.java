@@ -1,13 +1,15 @@
 package me.urbanowicz.samuel.stackoverflowcareers.view.feed;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.EditText;
 
 import java.io.IOException;
 
@@ -21,6 +23,9 @@ public class FeedActivity extends AppCompatActivity {
     private FeedRecyclerAdapter adapter;
     private RecyclerView feedRecyclerView;
     private Handler refreshFeedHandler;
+    private EditText titleEditText;
+    private EditText locationEditText;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -28,7 +33,22 @@ public class FeedActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate");
 
         setContentView(R.layout.activity_feed);
+
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        setTitle("Stack Overflow Careers");
+
         feedRecyclerView = (RecyclerView) findViewById(R.id.feedItemsRecyclerView);
+        titleEditText = (EditText) findViewById(R.id.titleEditText);
+        locationEditText = (EditText) findViewById(R.id.locationEditText);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                updateFeed();
+            }
+        });
+
         feedRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         feedRecyclerView.hasFixedSize();
         adapter = new FeedRecyclerAdapter();
@@ -64,6 +84,7 @@ public class FeedActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         adapter.setJobPosts(finalJobPostsFeed.getJobPosts());
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                 });
             }

@@ -1,14 +1,24 @@
 package me.urbanowicz.samuel.stackoverflowcareers.domain;
 
+import com.annimon.stream.Optional;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
-public class JobPostsFeed {
+public class JobPostsFeed implements Serializable {
     @SerializedName("results")
-    Collection<JobPost> jobPosts;
+    private Collection<JobPost> jobPosts;
 
-    public Collection<JobPost> getJobPosts() {
-        return jobPosts;
+    private JobPostsFeed(Collection<JobPost> jobPosts) {
+        this.jobPosts = new ArrayList<>(jobPosts);
     }
+
+    public Optional<Collection<JobPost>> getJobPosts() {
+        return Optional.ofNullable(jobPosts);
+    }
+
+    public static final JobPostsFeed EMPTY = new JobPostsFeed(Collections.EMPTY_LIST);
 }

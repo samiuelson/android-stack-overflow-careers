@@ -2,9 +2,10 @@ package me.urbanowicz.samuel.stackoverflowcareers.domain;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.net.URL;
 
-public class JobPost {
+public class JobPost implements Serializable {
 
     @SerializedName("job_link/_title")
     private String jobTitle;

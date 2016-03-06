@@ -4,15 +4,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -28,8 +26,8 @@ public class FeedActivity extends AppCompatActivity {
     private FeedRecyclerAdapter adapter;
     private RecyclerView feedRecyclerView;
     private Handler refreshFeedHandler;
-    private EditText titleEditText;
-    private EditText locationEditText;
+    private TextInputEditText titleEditText;
+    private TextInputEditText locationEditText;
     private SwipeRefreshLayout swipeRefreshLayout;
     private JobPostsFeed jobPostsFeed;
     private CoordinatorLayout contentView;
@@ -45,8 +43,8 @@ public class FeedActivity extends AppCompatActivity {
         setTitle("Stack Overflow Careers");
 
         feedRecyclerView = (RecyclerView) findViewById(R.id.feedItemsRecyclerView);
-        titleEditText = (EditText) findViewById(R.id.titleEditText);
-        locationEditText = (EditText) findViewById(R.id.locationEditText);
+        titleEditText = (TextInputEditText) findViewById(R.id.titleEditText);
+        locationEditText = (TextInputEditText) findViewById(R.id.locationEditText);
         contentView = (CoordinatorLayout) findViewById(R.id.contentView);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
@@ -90,7 +88,7 @@ public class FeedActivity extends AppCompatActivity {
             try {
                 jobPostsFeed =
                         new JobPostService()
-                                .getJobPostFeed()
+                                .getJobPostFeedCall()
                                 .execute()
                                 .body();
             } catch (IOException e) {

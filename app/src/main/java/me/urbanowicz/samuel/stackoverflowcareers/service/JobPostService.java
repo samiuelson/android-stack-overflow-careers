@@ -7,6 +7,7 @@ import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPostsFeed;
 import retrofit.Call;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
+import rx.Observable;
 
 public class JobPostService {
     private static final String BASE_FEED_URL =
@@ -23,10 +24,13 @@ public class JobPostService {
                         .create(JobPostFeedApi.class);
     }
 
-    public Call<JsonElement> getJobPostsFeed() {
+    public Call<JsonElement> getJobPostsFeedCall() {
         return jobPostFeedApi.getJobPostsJsonCall();
     }
-    public Call<JobPostsFeed> getJobPostFeed() {
+    public Call<JobPostsFeed> getJobPostFeedCall() {
         return jobPostFeedApi.getJobPostFeedCall();
+    }
+    public Observable<JobPostsFeed> getJobPostFeedObservable() {
+        return jobPostFeedApi.getJobPostFeedObservable();
     }
 }

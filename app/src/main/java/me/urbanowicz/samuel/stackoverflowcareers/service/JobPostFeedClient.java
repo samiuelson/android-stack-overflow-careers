@@ -19,7 +19,7 @@ public interface JobPostFeedClient {
     Call<JsonElement> getJobPostsJsonCall();
 
     @GET(FeedQueryPath)
-    Call<JsonElement> getJobPostsJsonCall(@Query("url") String searchTerm, @Query("_apikey") String apiKey);
+    Call<JsonElement> getJobPostsJsonCall(@Query(value = "url", encoded = true) String searchTerm, @Query(value = "_apikey", encoded = true) String apiKey);
 
     @GET(FeedQueryPath)
     Call<JobPostsFeed> getJobPostFeedCall();

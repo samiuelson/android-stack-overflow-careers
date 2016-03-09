@@ -98,7 +98,11 @@ public class FeedActivity extends AppCompatActivity {
         jobPostsFeedCall.enqueue(new Callback<JobPostsFeed>() {
             @Override
             public void onResponse(Response<JobPostsFeed> response, Retrofit retrofit) {
-                jobPostsFeed = response.body();
+                if (response.body() != null) {
+                    jobPostsFeed = response.body();
+                } else {
+                    setError("Feed is null for search term: " + searchTerm);
+                }
                 swipeRefreshLayout.setRefreshing(false);
                 refreshAdapter();
             }
@@ -117,6 +121,6 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void setError(String info) {
-        Toast.makeText(FeedActivity.this, info, Toast.LENGTH_SHORT).show();
+        Toast.makeText(FeedActivity.this, info, Toast.LENGTH_LONG).show();
     }
 }

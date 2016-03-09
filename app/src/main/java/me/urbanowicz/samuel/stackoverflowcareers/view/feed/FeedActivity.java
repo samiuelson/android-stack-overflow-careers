@@ -94,7 +94,7 @@ public class FeedActivity extends AppCompatActivity {
                         + titleEditText.getText().toString();
 
         JobPostFeedClient jobPostFeedClient = ServiceGenerator.createService(JobPostFeedClient.class);
-        Call<JobPostsFeed> jobPostsFeedCall = jobPostFeedClient.getJobPostFeedCall(searchTerm, ServiceUtils.getApiKey());
+        Call<JobPostsFeed> jobPostsFeedCall = jobPostFeedClient.getJobPostFeedCall(/*searchTerm, ServiceUtils.getApiKey()*/);
         jobPostsFeedCall.enqueue(new Callback<JobPostsFeed>() {
             @Override
             public void onResponse(Response<JobPostsFeed> response, Retrofit retrofit) {

@@ -24,7 +24,8 @@
             android:layout_height="wrap_content"
             android:hint="Job title..."
             android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp" />
+            android:layout_marginRight="16dp"
+            android:text="android"/>
         <android.support.design.widget.TextInputEditText
             android:id="@+id/locationEditText"
             android:layout_width="match_parent"
@@ -39,6 +40,7 @@
         android:id="@+id/swipeToRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:accessibilityLiveRegion="polite"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.support.v7.widget.RecyclerView

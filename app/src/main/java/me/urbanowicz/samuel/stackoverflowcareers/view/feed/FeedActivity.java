@@ -17,7 +17,13 @@ import java.io.IOException;
 
 import me.urbanowicz.samuel.stackoverflowcareers.R;
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPostsFeed;
-import me.urbanowicz.samuel.stackoverflowcareers.service.JobPostService;
+import me.urbanowicz.samuel.stackoverflowcareers.service.JobPostFeedClient;
+import me.urbanowicz.samuel.stackoverflowcareers.service.ServiceGenerator;
+import me.urbanowicz.samuel.stackoverflowcareers.service.ServiceUtils;
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 public class FeedActivity extends AppCompatActivity {
     private static final String TAG = FeedActivity.class.getSimpleName();
@@ -63,7 +69,7 @@ public class FeedActivity extends AppCompatActivity {
             jobPostsFeed = JobPostsFeed.EMPTY;
         }
 
-        if (jobPostsFeed.getJobPosts().isPresent() && jobPostsFeed.getJobPosts().get().size() > 0) {
+        if (jobPostsFeed != null && jobPostsFeed.getJobPosts().isPresent() && jobPostsFeed.getJobPosts().get().size() > 0) {
             refreshAdapter();
         } else {
             updateFeed();
@@ -83,30 +89,32 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void updateFeed() {
-        new Thread(() -> {
-            refreshFeedHandler.post(() -> swipeRefreshLayout.setRefreshing(true));
-            try {
-                jobPostsFeed =
-                        new JobPostService()
-                                .getJobPostFeedCall()
-                                .execute()
-                                .body();
-            } catch (IOException e) {
-                Log.e(TAG, e.getMessage());
+        final String searchTerm = titleEditText.getText().toString();
+
+        JobPostFeedClient jobPostFeedClient = ServiceGenerator.createService(JobPostFeedClient.class);
+        Call<JobPostsFeed> jobPostsFeedCall = jobPostFeedClient.getJobPostFeedCall(searchTerm, ServiceUtils.getApiKey());
+        jobPostsFeedCall.enqueue(new Callback<JobPostsFeed>() {
+            @Override
+            public void onResponse(Response<JobPostsFeed> response, Retrofit retrofit) {
+                jobPostsFeed = response.body();
+                swipeRefreshLayout.setRefreshing(false);
+                refreshAdapter();
             }
 
-            refreshFeedHandler.post(() -> {
-                if (jobPostsFeed.getJobPosts().isPresent()) {
-                    swipeRefreshLayout.setRefreshing(false);
-                    refreshAdapter();
-                } else {
-                    Toast.makeText(FeedActivity.this, "Unknown error", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }).start();
+            @Override
+            public void onFailure(Throwable t) {
+                jobPostsFeed = JobPostsFeed.EMPTY;
+                setError(t.getLocalizedMessage());
+            }
+        });
+
     }
 
     private void refreshAdapter() {
         adapter.setJobPosts(jobPostsFeed.getJobPosts().get());
+    }
+
+    private void setError(String info) {
+        Toast.makeText(FeedActivity.this, info, Toast.LENGTH_SHORT).show();
     }
 }

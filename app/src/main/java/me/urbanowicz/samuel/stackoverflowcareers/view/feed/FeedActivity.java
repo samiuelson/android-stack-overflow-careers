@@ -4,22 +4,26 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.IOException;
 
 import me.urbanowicz.samuel.stackoverflowcareers.R;
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPostsFeed;
-import me.urbanowicz.samuel.stackoverflowcareers.service.JobPostService;
+import me.urbanowicz.samuel.stackoverflowcareers.service.JobPostFeedClient;
+import me.urbanowicz.samuel.stackoverflowcareers.service.ServiceGenerator;
+import me.urbanowicz.samuel.stackoverflowcareers.service.ServiceUtils;
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 public class FeedActivity extends AppCompatActivity {
     private static final String TAG = FeedActivity.class.getSimpleName();
@@ -28,8 +32,8 @@ public class FeedActivity extends AppCompatActivity {
     private FeedRecyclerAdapter adapter;
     private RecyclerView feedRecyclerView;
     private Handler refreshFeedHandler;
-    private EditText titleEditText;
-    private EditText locationEditText;
+    private TextInputEditText titleEditText;
+    private TextInputEditText locationEditText;
     private SwipeRefreshLayout swipeRefreshLayout;
     private JobPostsFeed jobPostsFeed;
     private CoordinatorLayout contentView;
@@ -45,8 +49,8 @@ public class FeedActivity extends AppCompatActivity {
         setTitle("Stack Overflow Careers");
 
         feedRecyclerView = (RecyclerView) findViewById(R.id.feedItemsRecyclerView);
-        titleEditText = (EditText) findViewById(R.id.titleEditText);
-        locationEditText = (EditText) findViewById(R.id.locationEditText);
+        titleEditText = (TextInputEditText) findViewById(R.id.titleEditText);
+        locationEditText = (TextInputEditText) findViewById(R.id.locationEditText);
         contentView = (CoordinatorLayout) findViewById(R.id.contentView);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
@@ -65,7 +69,7 @@ public class FeedActivity extends AppCompatActivity {
             jobPostsFeed = JobPostsFeed.EMPTY;
         }
 
-        if (jobPostsFeed.getJobPosts().isPresent() && jobPostsFeed.getJobPosts().get().size() > 0) {
+        if (jobPostsFeed != null && jobPostsFeed.getJobPosts().isPresent() && jobPostsFeed.getJobPosts().get().size() > 0) {
             refreshAdapter();
         } else {
             updateFeed();
@@ -85,30 +89,34 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void updateFeed() {
-        new Thread(() -> {
-            refreshFeedHandler.post(() -> swipeRefreshLayout.setRefreshing(true));
-            try {
-                jobPostsFeed =
-                        new JobPostService()
-                                .getJobPostFeed()
-                                .execute()
-                                .body();
-            } catch (IOException e) {
-                Log.e(TAG, e.getMessage());
+        final String searchTerm =
+                "http://careers.stackoverflow.com/jobs?searchTerm="
+                        + titleEditText.getText().toString();
+
+        JobPostFeedClient jobPostFeedClient = ServiceGenerator.createService(JobPostFeedClient.class);
+        Call<JobPostsFeed> jobPostsFeedCall = jobPostFeedClient.getJobPostFeedCall(searchTerm, ServiceUtils.getApiKey());
+        jobPostsFeedCall.enqueue(new Callback<JobPostsFeed>() {
+            @Override
+            public void onResponse(Response<JobPostsFeed> response, Retrofit retrofit) {
+                jobPostsFeed = response.body();
+                swipeRefreshLayout.setRefreshing(false);
+                refreshAdapter();
             }
 
-            refreshFeedHandler.post(() -> {
-                if (jobPostsFeed.getJobPosts().isPresent()) {
-                    swipeRefreshLayout.setRefreshing(false);
-                    refreshAdapter();
-                } else {
-                    Toast.makeText(FeedActivity.this, "Unknown error", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }).start();
+            @Override
+            public void onFailure(Throwable t) {
+                jobPostsFeed = JobPostsFeed.EMPTY;
+                setError(t.getLocalizedMessage());
+            }
+        });
+
     }
 
     private void refreshAdapter() {
         adapter.setJobPosts(jobPostsFeed.getJobPosts().get());
+    }
+
+    private void setError(String info) {
+        Toast.makeText(FeedActivity.this, info, Toast.LENGTH_SHORT).show();
     }
 }

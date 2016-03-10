@@ -89,19 +89,19 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void updateFeed() {
-        final String searchTerm =
-                "http://careers.stackoverflow.com/jobs?searchTerm="
+        final String searchUrl =
+                "webpage/url=http://careers.stackoverflow.com/jobs/searchTerm="
                         + titleEditText.getText().toString();
 
         JobPostFeedClient jobPostFeedClient = ServiceGenerator.createService(JobPostFeedClient.class);
-        Call<JobPostsFeed> jobPostsFeedCall = jobPostFeedClient.getJobPostFeedCall(/*searchTerm, ServiceUtils.getApiKey()*/);
+        Call<JobPostsFeed> jobPostsFeedCall = jobPostFeedClient.getJobPostFeedCall(searchUrl, ServiceUtils.getApiKey());
         jobPostsFeedCall.enqueue(new Callback<JobPostsFeed>() {
             @Override
             public void onResponse(Response<JobPostsFeed> response, Retrofit retrofit) {
                 if (response.body() != null) {
                     jobPostsFeed = response.body();
                 } else {
-                    setError("Feed is null for search term: " + searchTerm);
+                    setError("Feed is null for search term: " + searchUrl);
                 }
                 swipeRefreshLayout.setRefreshing(false);
                 refreshAdapter();

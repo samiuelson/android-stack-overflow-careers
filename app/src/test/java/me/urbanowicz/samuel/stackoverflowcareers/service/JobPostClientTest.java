@@ -47,7 +47,12 @@ public class JobPostClientTest {
         System.out.print(response.errorBody());
         assertTrue(response.isSuccess());
 
-        assertNotNull((JobPostsFeed) response.body());
+        JobPostsFeed feed = response.body();
+        assertNotNull(feed);
+
+        assertNotNull(feed.getJobPosts());
+
+        assertTrue(feed.getJobPosts().isPresent());
     }
 
 }

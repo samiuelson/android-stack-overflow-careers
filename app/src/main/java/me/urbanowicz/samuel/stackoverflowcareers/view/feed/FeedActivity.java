@@ -10,7 +10,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
 import me.urbanowicz.samuel.stackoverflowcareers.R;
+import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPost;
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPostsFeed;
 import me.urbanowicz.samuel.stackoverflowcareers.service.JobPostFeedClient;
 import me.urbanowicz.samuel.stackoverflowcareers.service.ServiceGenerator;
@@ -26,7 +31,6 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
     private static final String KEY_JOBS_FEED = "jobs_feed";
 
     private FeedRecyclerAdapter adapter;
-    private RecyclerView feedRecyclerView;
     private TextInputEditText titleEditText;
     private SwipeRefreshLayout swipeRefreshLayout;
     private JobPostsFeed jobPostsFeed;
@@ -41,7 +45,7 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         setTitle("Stack Overflow Careers");
 
-        feedRecyclerView = (RecyclerView) findViewById(R.id.feedItemsRecyclerView);
+        RecyclerView feedRecyclerView = (RecyclerView) findViewById(R.id.feedItemsRecyclerView);
         titleEditText = (TextInputEditText) findViewById(R.id.titleEditText);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
@@ -117,6 +121,12 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
     // FeedRecyclerAdapter.OnItemClickListener
     @Override
     public void onClick(int position) {
-        DetailActivity.startActivity(this, "sample name"); //todo
+        JobPost jobPostClicked;
+        if (jobPostsFeed.getJobPosts().isPresent()) {
+            jobPostClicked = new ArrayList<>(jobPostsFeed.getJobPosts().get()).get(position);
+        } else {
+            jobPostClicked = JobPost.EMPTY;
+        }
+        DetailActivity.startActivity(this, jobPostClicked);
     }
 }

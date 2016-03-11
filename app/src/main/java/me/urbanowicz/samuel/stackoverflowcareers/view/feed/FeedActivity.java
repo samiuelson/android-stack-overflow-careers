@@ -15,12 +15,13 @@ import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPostsFeed;
 import me.urbanowicz.samuel.stackoverflowcareers.service.JobPostFeedClient;
 import me.urbanowicz.samuel.stackoverflowcareers.service.ServiceGenerator;
 import me.urbanowicz.samuel.stackoverflowcareers.service.ServiceUtils;
+import me.urbanowicz.samuel.stackoverflowcareers.view.detail.DetailActivity;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 
-public class FeedActivity extends AppCompatActivity {
+public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapter.OnItemClickListener{
     private static final String TAG = FeedActivity.class.getSimpleName();
     private static final String KEY_JOBS_FEED = "jobs_feed";
 
@@ -50,9 +51,8 @@ public class FeedActivity extends AppCompatActivity {
 
         feedRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         feedRecyclerView.hasFixedSize();
-        adapter = new FeedRecyclerAdapter();
+        adapter = new FeedRecyclerAdapter(this);
         feedRecyclerView.setAdapter(adapter);
-
 
         if (savedInstanceState != null) {
             jobPostsFeed = (JobPostsFeed) savedInstanceState.getSerializable(KEY_JOBS_FEED);
@@ -112,5 +112,11 @@ public class FeedActivity extends AppCompatActivity {
 
     private void setError(String info) {
         Toast.makeText(FeedActivity.this, info, Toast.LENGTH_LONG).show();
+    }
+
+    // FeedRecyclerAdapter.OnItemClickListener
+    @Override
+    public void onClick(int position) {
+        DetailActivity.startActivity(this, "sample name"); //todo
     }
 }

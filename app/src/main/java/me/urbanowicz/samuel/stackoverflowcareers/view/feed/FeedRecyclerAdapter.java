@@ -15,15 +15,18 @@ import me.urbanowicz.samuel.stackoverflowcareers.R;
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPost;
 
 
-class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapter.ViewHolder> {
+public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapter.ViewHolder> {
     private List<JobPost> jobPosts;
 
-    public FeedRecyclerAdapter() {
-        this(Collections.EMPTY_LIST);
+    private OnItemClickListener onItemClickListener;
+
+    public FeedRecyclerAdapter(OnItemClickListener listener) {
+        this(Collections.EMPTY_LIST, listener);
     }
 
-    public FeedRecyclerAdapter(Collection<JobPost> jobPosts) {
+    public FeedRecyclerAdapter(Collection<JobPost> jobPosts, OnItemClickListener listener) {
         this.jobPosts = new ArrayList<>(jobPosts);
+        this.onItemClickListener = listener;
     }
 
     public void setJobPosts(Collection<JobPost> jobPosts) {
@@ -43,6 +46,7 @@ class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapter.ViewH
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.jobTitleTextView.setText(jobPosts.get(position).getJobTitle());
+        holder.itemView.setOnClickListener((view) -> onItemClickListener.onClick(position));
     }
 
     @Override
@@ -50,11 +54,17 @@ class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapter.ViewH
         return jobPosts.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         final TextView jobTitleTextView;
         public ViewHolder(View itemView) {
             super(itemView);
             jobTitleTextView = (TextView) itemView.findViewById(R.id.jobTitleTextView);
         }
     }
+
+    public interface OnItemClickListener {
+        void onClick(int position);
+    }
+
+
 }

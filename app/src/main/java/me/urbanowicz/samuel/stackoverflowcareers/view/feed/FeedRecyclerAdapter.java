@@ -45,7 +45,10 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.jobTitleTextView.setText(jobPosts.get(position).getJobTitle());
+        final JobPost jobPost = jobPosts.get(position);
+        holder.job.setText(jobPost.getJobTitle());
+        holder.company.setText(jobPost.getCompanyName());
+        holder.location.setText(jobPost.getLocation());
         holder.itemView.setOnClickListener((view) -> onItemClickListener.onClick(position));
     }
 
@@ -55,10 +58,15 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        final TextView jobTitleTextView;
+        final TextView job;
+        final TextView company;
+        final TextView location;
+
         public ViewHolder(View itemView) {
             super(itemView);
-            jobTitleTextView = (TextView) itemView.findViewById(R.id.jobTitleTextView);
+            job = (TextView) itemView.findViewById(R.id.job_title);
+            company = (TextView) itemView.findViewById(R.id.company_name);
+            location = (TextView) itemView.findViewById(R.id.location);
         }
     }
 

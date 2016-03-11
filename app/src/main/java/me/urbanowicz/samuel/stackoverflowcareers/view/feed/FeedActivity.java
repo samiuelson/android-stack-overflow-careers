@@ -103,9 +103,8 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void updateFeed() {
-        final String searchUrl =
-                "http://careers.stackoverflow.com/jobs/searchTerm="
-                        + titleEditText.getText().toString();
+        final String searchQuery = titleEditText.getText().toString();
+        final String searchUrl = ServiceUtils.getUrlWithSearchQuery(searchQuery);
 
         final JobPostFeedClient jobPostFeedClient = ServiceGenerator.createService(JobPostFeedClient.class);
         final Call<JobPostsFeed> jobPostsFeedCall = jobPostFeedClient.getJobPostFeedCall(searchUrl, ServiceUtils.getApiKey());

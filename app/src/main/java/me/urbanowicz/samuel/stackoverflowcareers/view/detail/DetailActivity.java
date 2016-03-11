@@ -29,6 +29,7 @@ public class DetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         webView = (WebView) findViewById(R.id.web_view);
+        findViewById(R.id.fab).setOnClickListener((v) -> actionShare());
 
         setupAppBarValues();
         loadContent();
@@ -47,7 +48,6 @@ public class DetailActivity extends AppCompatActivity {
 
     private void setupAppBarValues() {
         setTitle(jobPost.getJobTitle());
-//        ((AppBarLayout) findViewById(R.id.toolbar_layout));
     }
 
     private void loadContent() {
@@ -57,7 +57,7 @@ public class DetailActivity extends AppCompatActivity {
     private void actionShare() {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_TEXT, jobPost.getJobLink());
+        intent.putExtra(Intent.EXTRA_TEXT, jobPost.getJobLink().toString());
         intent.putExtra(Intent.EXTRA_SUBJECT, jobPost.getJobTitle());
         startActivity(Intent.createChooser(intent, getString(R.string.share_job_title)));
     }

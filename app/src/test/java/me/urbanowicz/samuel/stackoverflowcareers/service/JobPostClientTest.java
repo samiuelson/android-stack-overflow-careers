@@ -36,7 +36,7 @@ public class JobPostClientTest {
     @Test public void
     shouldDownloadJobPostFeedForTerm() throws IOException {
         Call<JobPostsFeed> call = client.getJobPostFeedCall(
-                "http://careers.stackoverflow.com/jobs?searchTerm=android",
+                "http://careers.stackoverflow.com/jobs/searchTerm=android",
                 ServiceUtils.getApiKey()
         );
         assertNotNull(call);
@@ -44,9 +44,15 @@ public class JobPostClientTest {
         Response<JobPostsFeed> response = call.execute();
         assertNotNull(response);
 
+        System.out.print(response.errorBody());
         assertTrue(response.isSuccess());
 
-        assertNotNull((JobPostsFeed) response.body());
+        JobPostsFeed feed = response.body();
+        assertNotNull(feed);
+
+        assertNotNull(feed.getJobPosts());
+
+        assertTrue(feed.getJobPosts().isPresent());
     }
 
 }

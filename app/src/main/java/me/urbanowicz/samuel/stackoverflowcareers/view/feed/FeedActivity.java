@@ -1,8 +1,7 @@
 package me.urbanowicz.samuel.stackoverflowcareers.view.feed;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -11,10 +10,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.io.IOException;
-
+import me.urbanowicz.samuel.materialsearchview.SearchActivity;
 import me.urbanowicz.samuel.stackoverflowcareers.R;
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPostsFeed;
 import me.urbanowicz.samuel.stackoverflowcareers.service.JobPostFeedClient;
@@ -31,9 +32,7 @@ public class FeedActivity extends AppCompatActivity {
 
     private FeedRecyclerAdapter adapter;
     private RecyclerView feedRecyclerView;
-    private Handler refreshFeedHandler;
     private TextInputEditText titleEditText;
-    private TextInputEditText locationEditText;
     private SwipeRefreshLayout swipeRefreshLayout;
     private JobPostsFeed jobPostsFeed;
     private CoordinatorLayout contentView;
@@ -50,7 +49,6 @@ public class FeedActivity extends AppCompatActivity {
 
         feedRecyclerView = (RecyclerView) findViewById(R.id.feedItemsRecyclerView);
         titleEditText = (TextInputEditText) findViewById(R.id.titleEditText);
-        locationEditText = (TextInputEditText) findViewById(R.id.locationEditText);
         contentView = (CoordinatorLayout) findViewById(R.id.contentView);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
@@ -61,7 +59,6 @@ public class FeedActivity extends AppCompatActivity {
         adapter = new FeedRecyclerAdapter();
         feedRecyclerView.setAdapter(adapter);
 
-        refreshFeedHandler = new Handler(Looper.getMainLooper());
 
         if (savedInstanceState != null) {
             jobPostsFeed = (JobPostsFeed) savedInstanceState.getSerializable(KEY_JOBS_FEED);
@@ -88,17 +85,38 @@ public class FeedActivity extends AppCompatActivity {
         outState.putSerializable(KEY_JOBS_FEED, jobPostsFeed);
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        new MenuInflater(this).inflate(R.menu.menu_feed_activity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                //todo start search activity
+                startActivity(new Intent(FeedActivity.this, SearchActivity.class));
+                return true;
+            default: return super.onOptionsItemSelected(item);
+        }
+    }
+
     private void updateFeed() {
-        final String searchTerm =
-                "http://careers.stackoverflow.com/jobs?searchTerm="
+        final String searchUrl =
+                "http://careers.stackoverflow.com/jobs/searchTerm%3D"
                         + titleEditText.getText().toString();
 
         JobPostFeedClient jobPostFeedClient = ServiceGenerator.createService(JobPostFeedClient.class);
-        Call<JobPostsFeed> jobPostsFeedCall = jobPostFeedClient.getJobPostFeedCall(searchTerm, ServiceUtils.getApiKey());
+        Call<JobPostsFeed> jobPostsFeedCall = jobPostFeedClient.getJobPostFeedCall(searchUrl, ServiceUtils.getApiKey());
         jobPostsFeedCall.enqueue(new Callback<JobPostsFeed>() {
             @Override
             public void onResponse(Response<JobPostsFeed> response, Retrofit retrofit) {
-                jobPostsFeed = response.body();
+                if (response.body() != null) {
+                    jobPostsFeed = response.body();
+                } else {
+                    setError("Feed is null for search term: " + searchUrl);
+                }
                 swipeRefreshLayout.setRefreshing(false);
                 refreshAdapter();
             }
@@ -117,6 +135,6 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void setError(String info) {
-        Toast.makeText(FeedActivity.this, info, Toast.LENGTH_SHORT).show();
+        Toast.makeText(FeedActivity.this, info, Toast.LENGTH_LONG).show();
     }
 }

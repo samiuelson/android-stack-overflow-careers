@@ -104,11 +104,11 @@ public class FeedActivity extends AppCompatActivity {
 
     private void updateFeed() {
         final String searchUrl =
-                "http://careers.stackoverflow.com/jobs/searchTerm%3D"
+                "http://careers.stackoverflow.com/jobs/searchTerm="
                         + titleEditText.getText().toString();
 
-        JobPostFeedClient jobPostFeedClient = ServiceGenerator.createService(JobPostFeedClient.class);
-        Call<JobPostsFeed> jobPostsFeedCall = jobPostFeedClient.getJobPostFeedCall(searchUrl, ServiceUtils.getApiKey());
+        final JobPostFeedClient jobPostFeedClient = ServiceGenerator.createService(JobPostFeedClient.class);
+        final Call<JobPostsFeed> jobPostsFeedCall = jobPostFeedClient.getJobPostFeedCall(searchUrl, ServiceUtils.getApiKey());
         jobPostsFeedCall.enqueue(new Callback<JobPostsFeed>() {
             @Override
             public void onResponse(Response<JobPostsFeed> response, Retrofit retrofit) {

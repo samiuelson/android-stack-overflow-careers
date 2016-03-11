@@ -1,8 +1,6 @@
 package me.urbanowicz.samuel.stackoverflowcareers.view.feed;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -10,12 +8,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.widget.Toast;
 
-import me.urbanowicz.samuel.materialsearchview.SearchActivity;
 import me.urbanowicz.samuel.stackoverflowcareers.R;
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPostsFeed;
 import me.urbanowicz.samuel.stackoverflowcareers.service.JobPostFeedClient;
@@ -35,7 +29,6 @@ public class FeedActivity extends AppCompatActivity {
     private TextInputEditText titleEditText;
     private SwipeRefreshLayout swipeRefreshLayout;
     private JobPostsFeed jobPostsFeed;
-    private CoordinatorLayout contentView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,10 +42,11 @@ public class FeedActivity extends AppCompatActivity {
 
         feedRecyclerView = (RecyclerView) findViewById(R.id.feedItemsRecyclerView);
         titleEditText = (TextInputEditText) findViewById(R.id.titleEditText);
-        contentView = (CoordinatorLayout) findViewById(R.id.contentView);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
         swipeRefreshLayout.setOnRefreshListener(() -> updateFeed());
+
+        findViewById(R.id.searchBtn).setOnClickListener((btn) -> updateFeed());
 
         feedRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         feedRecyclerView.hasFixedSize();
@@ -83,23 +77,6 @@ public class FeedActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(KEY_JOBS_FEED, jobPostsFeed);
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        new MenuInflater(this).inflate(R.menu.menu_feed_activity, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_search:
-                //todo start search activity
-                startActivity(new Intent(FeedActivity.this, SearchActivity.class));
-                return true;
-            default: return super.onOptionsItemSelected(item);
-        }
     }
 
     private void updateFeed() {

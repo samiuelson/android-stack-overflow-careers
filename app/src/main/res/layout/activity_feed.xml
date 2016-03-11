@@ -10,29 +10,39 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
-        android:paddingBottom="8dp">
+        android:paddingBottom="8dp"
+        app:layout_scrollFlags="scroll|enterAlwaysCollapsed">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize" />
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/titleEditText"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Job title..."
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:text="android"/>
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/locationEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Location..."
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"/>
+            android:orientation="horizontal">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/titleEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:lines="1"
+                android:maxLines="1"
+                android:hint="Job title..."/>
+
+            <ImageView
+                android:id="@+id/searchBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_search"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                android:background="?selectableItemBackground"/>
+        </LinearLayout>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -47,8 +57,7 @@
             android:id="@+id/feedItemsRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
 </android.support.design.widget.CoordinatorLayout>

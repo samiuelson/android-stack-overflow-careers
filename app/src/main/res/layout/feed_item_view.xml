@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="8dp">
 
         <TextView
             android:id="@+id/job_title"
@@ -35,6 +35,8 @@
                 android:id="@+id/company_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:lines="1"
+                android:ellipsize="end"
                 android:textStyle="bold"
                 android:textColor="#000"
                 android:padding="4dp"/>
@@ -43,6 +45,8 @@
                 android:id="@+id/location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:lines="1"
+                android:ellipsize="end"
                 android:fontFamily="sans-serif-light"
                 android:textColor="#000"
                 android:padding="4dp"/>

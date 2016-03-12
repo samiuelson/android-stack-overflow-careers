@@ -15,15 +15,18 @@ import me.urbanowicz.samuel.stackoverflowcareers.R;
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPost;
 
 
-class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapter.ViewHolder> {
+public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapter.ViewHolder> {
     private List<JobPost> jobPosts;
 
-    public FeedRecyclerAdapter() {
-        this(Collections.EMPTY_LIST);
+    private OnItemClickListener onItemClickListener;
+
+    public FeedRecyclerAdapter(OnItemClickListener listener) {
+        this(Collections.EMPTY_LIST, listener);
     }
 
-    public FeedRecyclerAdapter(Collection<JobPost> jobPosts) {
+    public FeedRecyclerAdapter(Collection<JobPost> jobPosts, OnItemClickListener listener) {
         this.jobPosts = new ArrayList<>(jobPosts);
+        this.onItemClickListener = listener;
     }
 
     public void setJobPosts(Collection<JobPost> jobPosts) {
@@ -42,7 +45,11 @@ class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapter.ViewH
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.jobTitleTextView.setText(jobPosts.get(position).getJobTitle());
+        final JobPost jobPost = jobPosts.get(position);
+        holder.job.setText(jobPost.getJobTitle());
+        holder.company.setText(jobPost.getCompanyName());
+        holder.location.setText(jobPost.getLocation());
+        holder.itemView.setOnClickListener((view) -> onItemClickListener.onClick(position));
     }
 
     @Override
@@ -50,11 +57,22 @@ class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapter.ViewH
         return jobPosts.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
-        final TextView jobTitleTextView;
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        final TextView job;
+        final TextView company;
+        final TextView location;
+
         public ViewHolder(View itemView) {
             super(itemView);
-            jobTitleTextView = (TextView) itemView.findViewById(R.id.jobTitleTextView);
+            job = (TextView) itemView.findViewById(R.id.job_title);
+            company = (TextView) itemView.findViewById(R.id.company_name);
+            location = (TextView) itemView.findViewById(R.id.location);
         }
     }
+
+    public interface OnItemClickListener {
+        void onClick(int position);
+    }
+
+
 }

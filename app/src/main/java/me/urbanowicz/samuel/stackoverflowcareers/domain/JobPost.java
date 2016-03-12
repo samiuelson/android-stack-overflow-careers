@@ -9,9 +9,12 @@ public class JobPost implements Serializable {
 
     @SerializedName("job_link/_title")
     private String jobTitle;
-
     @SerializedName("job_link")
     private URL jobLink;
+    @SerializedName("employer_value")
+    private String companyName;
+    @SerializedName("location_value")
+    private String location;
 
     public String getJobTitle() {
         return jobTitle;
@@ -20,4 +23,14 @@ public class JobPost implements Serializable {
     public URL getJobLink() {
         return jobLink;
     }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public static final JobPost EMPTY = new JobPost();
 }

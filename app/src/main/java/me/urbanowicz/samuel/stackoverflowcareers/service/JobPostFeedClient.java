@@ -15,7 +15,7 @@ public interface JobPostFeedClient {
 
     @GET(FeedForTermQueryPath)
     Call<JobPostsFeed> getJobPostFeedCall(
-            @Query("input/webpage/url=") String urlWithSearchTerm,
-            @Query("_apikey") String apiKey
+            @Query(value = "input", encoded = true) String urlWithSearchTerm,
+            @Query(value = "_apikey", encoded = true) String apiKey
     );
 }

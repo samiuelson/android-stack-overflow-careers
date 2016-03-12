@@ -20,7 +20,11 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:expandedTitleTextAppearance="@style/ExpanedAppbar"
+            app:collapsedTitleTextAppearance="@style/CollapsedAppbar"
+            app:expandedTitleMarginStart="16dp"
+            app:expandedTitleMarginEnd="16dp">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -31,11 +35,17 @@
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
-        <ProgressBar
-            android:id="@+id/progress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+
     </android.support.design.widget.AppBarLayout>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:indeterminate="true"
+        android:visibility="visible" />
 
     <include layout="@layout/content_detail" />
 

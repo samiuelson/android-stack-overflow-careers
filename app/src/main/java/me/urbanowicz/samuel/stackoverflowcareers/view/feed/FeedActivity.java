@@ -69,7 +69,7 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
             jobPostsFeed = JobPostsFeed.EMPTY;
         }
 
-        getSupportActionBar().setSubtitle(!TextUtils.isEmpty(query)? "Feed" : query );
+        getSupportActionBar().setSubtitle(!TextUtils.isEmpty(query)? query : "Feed" );
 
         if (jobPostsFeed != null && jobPostsFeed.getJobPosts().isPresent() && jobPostsFeed.getJobPosts().get().size() > 0) {
             refreshAdapter();

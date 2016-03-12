@@ -3,12 +3,12 @@ package me.urbanowicz.samuel.stackoverflowcareers.view.feed;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.TextInputEditText;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,6 +33,7 @@ import retrofit.Retrofit;
 public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapter.OnItemClickListener{
     private static final String TAG = FeedActivity.class.getSimpleName();
     private static final String KEY_JOBS_FEED = "jobs_feed";
+    private static final String KEY_QUERY = "query";
     private static final int KEY_SEARCH_RESULT = 23;
 
     private FeedRecyclerAdapter adapter;
@@ -62,9 +63,13 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
 
         if (savedInstanceState != null) {
             jobPostsFeed = (JobPostsFeed) savedInstanceState.getSerializable(KEY_JOBS_FEED);
+            String query = savedInstanceState.getString(KEY_QUERY);
+            this.query = query == null? "" : query;
         } else {
             jobPostsFeed = JobPostsFeed.EMPTY;
         }
+
+        getSupportActionBar().setSubtitle(!TextUtils.isEmpty(query)? "Feed" : query );
 
         if (jobPostsFeed != null && jobPostsFeed.getJobPosts().isPresent() && jobPostsFeed.getJobPosts().get().size() > 0) {
             refreshAdapter();
@@ -83,6 +88,7 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(KEY_JOBS_FEED, jobPostsFeed);
+        outState.putString(KEY_QUERY, query);
     }
 
     @Override

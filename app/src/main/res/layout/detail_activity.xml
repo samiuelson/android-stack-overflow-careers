@@ -38,15 +38,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <ProgressBar
-        android:id="@+id/progress"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:indeterminate="true"
-        android:visibility="visible" />
-
     <include layout="@layout/content_detail" />
 
     <android.support.design.widget.FloatingActionButton

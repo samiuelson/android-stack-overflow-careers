@@ -12,20 +12,22 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 
 import me.urbanowicz.samuel.stackoverflowcareers.R;
 
 public class SearchActivity extends AppCompatActivity {
 
-    private SearchView searchView;
+    private EditText searchView;
     private String query;
 
     @Override
@@ -33,22 +35,32 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         findViewById(R.id.scrim).setOnClickListener((v) -> dismiss());
-        searchView = (SearchView) findViewById(R.id.search_view);
-        setupSearchView();
+        searchView = (EditText) findViewById(R.id.search_view);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         Drawable back = DrawableCompat.wrap(ContextCompat.getDrawable(this, R.drawable.ic_back));
         toolbar.setNavigationIcon(back);
         toolbar.setNavigationOnClickListener((v) -> dismiss());
+        toolbar.inflateMenu(R.menu.menu_activity_search);
+        toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_search) {
+                finishWithResult();
+                return true;
+            }
+            return false;
+        });
 
         String query = getIntent().getStringExtra(SearchManager.QUERY);
         this.query = query == null? "" : query;
-        searchView.setQuery(query, false);
+        setupSearchView();
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             doEnterAnim();
         }
 
         overridePendingTransition(0, 0);
+
+        searchView.requestFocus();
     }
 
     @Override
@@ -65,16 +77,16 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void setupSearchView() {
-        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconified(false);
-        searchView.setQueryHint("Job title");
-        searchView.setOnCloseListener(() -> {
-            dismiss();
+        searchView.setHint("Job title");
+        searchView.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                finishWithResult();
+                return true;
+            }
             return false;
         });
         if (!TextUtils.isEmpty(query)) {
-            searchView.setQuery(query, false);
+            searchView.setText(query);
         }
     }
 
@@ -87,6 +99,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void finishWithResult() {
+        query = searchView.getText().toString();
         Intent result = new Intent();
         result.putExtra(SearchManager.QUERY, query);
         setResult(RESULT_OK, result);
@@ -150,7 +163,7 @@ public class SearchActivity extends AppCompatActivity {
         shrink.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                searchPanel.setVisibility(View.INVISIBLE);
+                searchPanel.setVisibility(View.GONE);
                 ActivityCompat.finishAfterTransition(SearchActivity.this);
             }
         });

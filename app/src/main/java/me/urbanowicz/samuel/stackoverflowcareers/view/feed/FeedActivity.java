@@ -153,7 +153,9 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
     }
 
     private void actionShowSearch() {
-        startActivityForResult(new Intent(this, SearchActivity.class), KEY_SEARCH_RESULT);
+        Intent intent = new Intent(this, SearchActivity.class);
+        intent.putExtra(SearchManager.QUERY, query);
+        startActivityForResult(intent, KEY_SEARCH_RESULT);
     }
 
     // FeedRecyclerAdapter.OnItemClickListener

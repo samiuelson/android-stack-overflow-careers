@@ -32,11 +32,13 @@
             android:layout_height="?actionBarSize"
             android:gravity="center_vertical" >
 
-            <android.support.v7.widget.SearchView
+            <EditText
                 android:id="@+id/search_view"
+                android:focusable="true"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:imeOptions="actionSearch|flagNoExtractUi" />
+                android:singleLine="true"
+                android:imeOptions="actionSearch" />
 
         </android.support.v7.widget.Toolbar>
 

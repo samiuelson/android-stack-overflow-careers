@@ -105,4 +105,6 @@
         completions."
     </string>
     <string name="share_job_title">Share the job!</string>
+    <string name="action_search_label">Search</string>
+    <string name="activity_search_name">Search</string>
 </resources>

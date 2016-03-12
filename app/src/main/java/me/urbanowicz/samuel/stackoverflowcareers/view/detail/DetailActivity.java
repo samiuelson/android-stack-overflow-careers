@@ -7,7 +7,11 @@ import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.ProgressBar;
 
 import me.urbanowicz.samuel.stackoverflowcareers.R;
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPost;
@@ -29,6 +33,11 @@ public class DetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         webView = (WebView) findViewById(R.id.web_view);
+        webView.getSettings().setJavaScriptEnabled(true);
+//        webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+//        webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+//        webView.setScrollbarFadingEnabled(false);
+
         findViewById(R.id.fab).setOnClickListener((v) -> actionShare());
 
         setupAppBarValues();

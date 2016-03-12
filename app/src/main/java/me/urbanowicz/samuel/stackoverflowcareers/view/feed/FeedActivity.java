@@ -1,5 +1,7 @@
 package me.urbanowicz.samuel.stackoverflowcareers.view.feed;
 
+import android.app.SearchManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -8,11 +10,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 import me.urbanowicz.samuel.stackoverflowcareers.R;
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPost;
@@ -21,6 +24,7 @@ import me.urbanowicz.samuel.stackoverflowcareers.service.JobPostFeedClient;
 import me.urbanowicz.samuel.stackoverflowcareers.service.ServiceGenerator;
 import me.urbanowicz.samuel.stackoverflowcareers.service.ServiceUtils;
 import me.urbanowicz.samuel.stackoverflowcareers.view.detail.DetailActivity;
+import me.urbanowicz.samuel.stackoverflowcareers.view.search.SearchActivity;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -29,11 +33,12 @@ import retrofit.Retrofit;
 public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapter.OnItemClickListener{
     private static final String TAG = FeedActivity.class.getSimpleName();
     private static final String KEY_JOBS_FEED = "jobs_feed";
+    private static final int KEY_SEARCH_RESULT = 23;
 
     private FeedRecyclerAdapter adapter;
-    private TextInputEditText titleEditText;
     private SwipeRefreshLayout swipeRefreshLayout;
     private JobPostsFeed jobPostsFeed;
+    private String query = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,12 +51,9 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
         setTitle("Stack Overflow Careers");
 
         RecyclerView feedRecyclerView = (RecyclerView) findViewById(R.id.feedItemsRecyclerView);
-        titleEditText = (TextInputEditText) findViewById(R.id.titleEditText);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
         swipeRefreshLayout.setOnRefreshListener(() -> updateFeed());
-
-        findViewById(R.id.searchBtn).setOnClickListener((btn) -> updateFeed());
 
         feedRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         feedRecyclerView.hasFixedSize();
@@ -83,8 +85,40 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
         outState.putSerializable(KEY_JOBS_FEED, jobPostsFeed);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = new MenuInflater(this);
+        inflater.inflate(R.menu.menu_activity_feed, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                actionShowSearch();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == KEY_SEARCH_RESULT) {
+                final String query = data.getStringExtra(SearchManager.QUERY);
+                this.query = query == null? "" : query;
+                getSupportActionBar().setSubtitle(query);
+                updateFeed();
+            } else {
+                super.onActivityResult(requestCode, resultCode, data);
+            }
+        }
+    }
+
     private void updateFeed() {
-        final String searchQuery = titleEditText.getText().toString();
+        final String searchQuery = query;
         final String searchUrl = ServiceUtils.getUrlWithSearchQuery(searchQuery);
 
         final JobPostFeedClient jobPostFeedClient = ServiceGenerator.createService(JobPostFeedClient.class);
@@ -116,6 +150,12 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
 
     private void setError(String info) {
         Toast.makeText(FeedActivity.this, info, Toast.LENGTH_LONG).show();
+    }
+
+    private void actionShowSearch() {
+        Intent intent = new Intent(this, SearchActivity.class);
+        intent.putExtra(SearchManager.QUERY, query);
+        startActivityForResult(intent, KEY_SEARCH_RESULT);
     }
 
     // FeedRecyclerAdapter.OnItemClickListener

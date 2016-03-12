@@ -10,39 +10,13 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="8dp"
         app:layout_scrollFlags="scroll|enterAlwaysCollapsed">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/titleEditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:lines="1"
-                android:maxLines="1"
-                android:hint="Job title..."/>
-
-            <ImageView
-                android:id="@+id/searchBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_search"
-                android:layout_gravity="center"
-                android:padding="10dp"
-                android:background="?selectableItemBackground"/>
-        </LinearLayout>
+            android:layout_height="?attr/actionBarSize"
+            android:popupTheme="@style/AppTheme.AppBarOverlay" />
 
     </android.support.design.widget.AppBarLayout>
 
@@ -50,7 +24,6 @@
         android:id="@+id/swipeToRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:accessibilityLiveRegion="polite"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.support.v7.widget.RecyclerView

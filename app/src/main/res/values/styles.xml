@@ -23,5 +23,25 @@
         <item name="android:fontFamily">sans-serif-thin</item>
     </style>
 
+    <style name="AppTheme.SearchActivity" parent="AppTheme">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="autoCompleteTextViewStyle">@style/AppTheme.SearchActivity.AutoCompleteTextView</item>
+        <item name="searchViewStyle">@style/AppTheme.SearchActivity.SearchView</item>
+        <item name="colorControlNormal">#111</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.SearchActivity.SearchView" parent="Widget.AppCompat.SearchView">
+        <item name="searchHintIcon">@null</item>
+        <item name="queryBackground">@null</item>
+        <item name="submitBackground">@null</item>
+    </style>
+
+    <style name="AppTheme.SearchActivity.AutoCompleteTextView" parent="Widget.AppCompat.Light.AutoCompleteTextView">
+        <item name="android:textColorHint">#555</item>
+        <!-- If set to @null the cursor will be displayed using android:textColor -->
+        <item name="android:textCursorDrawable">@null</item>
+    </style>
 
 </resources>

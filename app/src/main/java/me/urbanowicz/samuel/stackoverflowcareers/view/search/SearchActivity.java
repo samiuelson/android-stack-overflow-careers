@@ -1,4 +1,4 @@
-package me.urbanowicz.samuel.materialsearchview;
+package me.urbanowicz.samuel.stackoverflowcareers.view.search;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -15,39 +15,34 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
 
+import me.urbanowicz.samuel.stackoverflowcareers.R;
+
 public class SearchActivity extends AppCompatActivity {
 
     private SearchView searchView;
-    private String query = "";
+    private String query;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-
+        findViewById(R.id.scrim).setOnClickListener((v) -> dismiss());
         searchView = (SearchView) findViewById(R.id.search_view);
         setupSearchView();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
-        Drawable up = DrawableCompat.wrap(ContextCompat.getDrawable(this, R.drawable.ic_up));
-        DrawableCompat.setTint(up, getResources().getColor(R.color.app_body_text_2));
-        toolbar.setNavigationIcon(up);
-        toolbar.setNavigationOnClickListener(view -> onBackPressed());
+        Drawable back = DrawableCompat.wrap(ContextCompat.getDrawable(this, R.drawable.ic_back));
+        toolbar.setNavigationIcon(back);
+        toolbar.setNavigationOnClickListener((v) -> dismiss());
 
         String query = getIntent().getStringExtra(SearchManager.QUERY);
-        query = query == null ? "" : query;
-        this.query = query;
-
-        if (searchView != null) {
-            searchView.setQuery(query, false);
-        }
+        this.query = query == null? "" : query;
+        searchView.setQuery(query, false);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             doEnterAnim();
@@ -56,47 +51,26 @@ public class SearchActivity extends AppCompatActivity {
         overridePendingTransition(0, 0);
     }
 
-    /**
-     * As we only ever want one instance of this screen, we set a launchMode of singleTop. This
-     * means that instead of re-creating this Activity, a new intent is delivered via this callback.
-     * This prevents multiple instances of the search dialog 'stacking up' e.g. if you perform a
-     * voice search.
-     *
-     * See: http://developer.android.com/guide/topics/manifest/activity-element.html#lmode
-     */
     @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        if (intent.hasExtra(SearchManager.QUERY)) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            if (!TextUtils.isEmpty(query)) {
-                searchFor(query);
-                searchView.setQuery(query, false);
-            }
+    protected void onPause() {
+        super.onPause();
+        if (isFinishing()) {
+            overridePendingTransition(0, 0);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        dismiss();
     }
 
     private void setupSearchView() {
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconified(false);
-        // Set the query hint.
         searchView.setQueryHint("Job title");
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                searchView.clearFocus();
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                searchFor(s);
-                return true;
-            }
-        });
         searchView.setOnCloseListener(() -> {
-            dismiss(null);
+            dismiss();
             return false;
         });
         if (!TextUtils.isEmpty(query)) {
@@ -104,12 +78,7 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        dismiss(null);
-    }
-
-    public void dismiss(View view) {
+    private void dismiss() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             doExitAnim();
         } else {
@@ -117,10 +86,13 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * On Lollipop+ perform a circular reveal animation (an expanding circular mask) when showing
-     * the search panel.
-     */
+    private void finishWithResult() {
+        Intent result = new Intent();
+        result.putExtra(SearchManager.QUERY, query);
+        setResult(RESULT_OK, result);
+        dismiss();
+    }
+
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void doEnterAnim() {
         // Fade in a background scrim as this is a floating window. We could have used a
@@ -161,10 +133,6 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * On Lollipop+ perform a circular animation (a contracting circular mask) when hiding the
-     * search panel.
-     */
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void doExitAnim() {
         final View searchPanel = findViewById(R.id.search_panel);
@@ -196,18 +164,6 @@ public class SearchActivity extends AppCompatActivity {
                         AnimationUtils.loadInterpolator(SearchActivity.this,
                                 android.R.interpolator.fast_out_slow_in))
                 .start();
-    }
-
-    private void searchFor(String query) {
-        // todo
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (isFinishing()) {
-            overridePendingTransition(0, 0);
-        }
     }
 
 }

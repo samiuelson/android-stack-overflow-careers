@@ -125,7 +125,7 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
 
     private void updateFeed() {
         final String searchQuery = query;
-        final String searchUrl = ServiceUtils.getUrlWithSearchQuery(searchQuery);
+        final String searchUrl = new ServiceUtils.SearchQueryUrlBuilder().addJobTitle(query).toString();
 
         final JobPostFeedClient jobPostFeedClient = ServiceGenerator.createService(JobPostFeedClient.class);
         final Call<JobPostsFeed> jobPostsFeedCall = jobPostFeedClient.getJobPostFeedCall(searchUrl, ServiceUtils.getApiKey());

@@ -25,7 +25,7 @@
 
         <activity android:name="me.urbanowicz.samuel.stackoverflowcareers.view.search.SearchActivity"
             android:label="@string/activity_search_name"
-            android:theme="@style/AppTheme.SearchActivity"
+            android:theme="@style/SearchActivity"
             android:windowSoftInputMode="stateVisible"
             android:launchMode="singleTop"/>
     </application>

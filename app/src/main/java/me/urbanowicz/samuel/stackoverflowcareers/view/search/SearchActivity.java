@@ -19,6 +19,8 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -33,15 +35,17 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_search);
+
         findViewById(R.id.scrim).setOnClickListener((v) -> dismiss());
         searchView = (EditText) findViewById(R.id.search_view);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         Drawable back = DrawableCompat.wrap(ContextCompat.getDrawable(this, R.drawable.ic_back));
         toolbar.setNavigationIcon(back);
-        toolbar.setNavigationOnClickListener((v) -> dismiss());
+        toolbar.setNavigationOnClickListener((View v) -> dismiss());
         toolbar.inflateMenu(R.menu.menu_activity_search);
-        toolbar.setOnMenuItemClickListener(item -> {
+        toolbar.setOnMenuItemClickListener((MenuItem item) -> {
             if (item.getItemId() == R.id.action_search) {
                 finishWithResult();
                 return true;

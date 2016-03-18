@@ -28,10 +28,10 @@ import me.urbanowicz.samuel.stackoverflowcareers.domain.Search;
 
 public class SearchActivity extends AppCompatActivity {
 
-    public static final String EXTRA_SEARCH= "extra_search";
+    public static final String EXTRA_SEARCH = "extra_search";
 
     private EditText searchView;
-    private String query;
+    private Search search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +54,8 @@ public class SearchActivity extends AppCompatActivity {
             return false;
         });
 
-        String query = getIntent().getStringExtra(SearchManager.QUERY);
-        this.query = query == null? "" : query;
+        Search search = (Search) getIntent().getSerializableExtra(SearchActivity.EXTRA_SEARCH);
+        this.search = search == null? Search.EMPTY : search;
         setupSearchView();
 
 
@@ -90,8 +90,8 @@ public class SearchActivity extends AppCompatActivity {
             }
             return false;
         });
-        if (!TextUtils.isEmpty(query)) {
-            searchView.setText(query);
+        if (!TextUtils.isEmpty(search.getJobTitle())) {
+            searchView.setText(search.getJobTitle());
         }
     }
 
@@ -104,8 +104,8 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void finishWithResult() {
-        query = searchView.getText().toString();
-        Search search = new Search();
+        String jobTitle = searchView.getText().toString();
+        Search search = new Search(jobTitle, "", 100, "", false, false, false);
         Intent result = new Intent();
         result.putExtra(EXTRA_SEARCH, search);
         setResult(RESULT_OK, result);

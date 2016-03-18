@@ -11,7 +11,14 @@ public class Search implements Serializable {
     private final boolean providesRelocation;
     private final boolean providesVisaSponsorship;
 
-    public Search(String jobTitle, String location, int distance, String distanceUnits, boolean allowsRemote, boolean providesRelocation, boolean providesVisaSponsorship) {
+    public Search(String jobTitle,
+                  String location,
+                  int distance,
+                  String distanceUnits,
+                  boolean allowsRemote,
+                  boolean providesRelocation,
+                  boolean providesVisaSponsorship) {
+
         this.jobTitle = jobTitle;
         this.location = location;
         this.distance = distance;
@@ -48,4 +55,6 @@ public class Search implements Serializable {
     public boolean isProvidesVisaSponsorship() {
         return providesVisaSponsorship;
     }
+
+    public final static Search EMPTY = new Search("", "", 100, "", false, false, false);
 }

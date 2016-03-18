@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import me.urbanowicz.samuel.stackoverflowcareers.R;
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPost;
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPostsFeed;
+import me.urbanowicz.samuel.stackoverflowcareers.domain.Search;
 import me.urbanowicz.samuel.stackoverflowcareers.service.JobPostFeedClient;
 import me.urbanowicz.samuel.stackoverflowcareers.service.ServiceGenerator;
 import me.urbanowicz.samuel.stackoverflowcareers.service.ServiceUtils;
@@ -33,13 +34,13 @@ import retrofit.Retrofit;
 public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapter.OnItemClickListener{
     private static final String TAG = FeedActivity.class.getSimpleName();
     private static final String KEY_JOBS_FEED = "jobs_feed";
-    private static final String KEY_QUERY = "query";
+    private static final String KEY_SEARCH = "search";
     private static final int KEY_SEARCH_RESULT = 23;
 
     private FeedRecyclerAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private JobPostsFeed jobPostsFeed;
-    private String query = "";
+    private Search search;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,13 +64,14 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
 
         if (savedInstanceState != null) {
             jobPostsFeed = (JobPostsFeed) savedInstanceState.getSerializable(KEY_JOBS_FEED);
-            String query = savedInstanceState.getString(KEY_QUERY);
-            this.query = query == null? "" : query;
+            Search search = (Search) savedInstanceState.getSerializable(KEY_SEARCH);
+            this.search = search == null? Search.EMPTY : search;
         } else {
             jobPostsFeed = JobPostsFeed.EMPTY;
+            search = Search.EMPTY;
         }
 
-        getSupportActionBar().setSubtitle(!TextUtils.isEmpty(query)? query : "Feed" );
+        refreshSubtitle();
 
         if (jobPostsFeed != null && jobPostsFeed.getJobPosts().isPresent() && jobPostsFeed.getJobPosts().get().size() > 0) {
             refreshAdapter();
@@ -88,7 +90,7 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(KEY_JOBS_FEED, jobPostsFeed);
-        outState.putString(KEY_QUERY, query);
+        outState.putSerializable(KEY_SEARCH, search);
     }
 
     @Override
@@ -113,9 +115,9 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == KEY_SEARCH_RESULT) {
-                final String jobTitle = data.getStringExtra(SearchActivity.EXTRA_JOB_TITLE);
-                this.query = jobTitle == null? "" : jobTitle;
-                getSupportActionBar().setSubtitle(jobTitle);
+                final Search search = (Search) data.getSerializableExtra(SearchActivity.EXTRA_SEARCH);
+                this.search = search == null? Search.EMPTY : search;
+                refreshSubtitle();
                 updateFeed();
             } else {
                 super.onActivityResult(requestCode, resultCode, data);
@@ -124,8 +126,10 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
     }
 
     private void updateFeed() {
-        final String searchQuery = query;
-        final String searchUrl = new ServiceUtils.SearchQueryUrlBuilder().addJobTitle(query).toString();
+        final String searchUrl = new ServiceUtils
+                .SearchQueryUrlBuilder()
+                .addJobTitle(search.getJobTitle())
+                .toString();
 
         final JobPostFeedClient jobPostFeedClient = ServiceGenerator.createService(JobPostFeedClient.class);
         final Call<JobPostsFeed> jobPostsFeedCall = jobPostFeedClient.getJobPostFeedCall(searchUrl, ServiceUtils.getApiKey());
@@ -150,6 +154,13 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
 
     }
 
+    private void refreshSubtitle() {
+        getSupportActionBar()
+                .setSubtitle(!TextUtils.isEmpty(search.getJobTitle()) ?
+                        search.getJobTitle() :
+                        getString(R.string.activity_feed_latest_label));
+    }
+
     private void refreshAdapter() {
         adapter.setJobPosts(jobPostsFeed.getJobPosts().get());
     }
@@ -160,7 +171,7 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
 
     private void actionShowSearch() {
         Intent intent = new Intent(this, SearchActivity.class);
-        intent.putExtra(SearchManager.QUERY, query);
+        intent.putExtra(SearchActivity.EXTRA_SEARCH, search);
         startActivityForResult(intent, KEY_SEARCH_RESULT);
     }
 

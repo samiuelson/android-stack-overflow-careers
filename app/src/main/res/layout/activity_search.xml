@@ -80,6 +80,7 @@
                     <View style="@style/Divider" />
 
                     <EditText
+                        android:id="@+id/location"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="12dp"

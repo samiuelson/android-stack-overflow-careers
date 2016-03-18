@@ -1,9 +1,9 @@
 package me.urbanowicz.samuel.stackoverflowcareers.view.feed;
 
-import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -55,7 +55,7 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
         RecyclerView feedRecyclerView = (RecyclerView) findViewById(R.id.feedItemsRecyclerView);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
-        swipeRefreshLayout.setOnRefreshListener(() -> updateFeed());
+        swipeRefreshLayout.setOnRefreshListener(this::updateFeed);
 
         feedRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         feedRecyclerView.hasFixedSize();
@@ -126,11 +126,7 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
     }
 
     private void updateFeed() {
-        final String searchUrl = new ServiceUtils
-                .SearchQueryUrlBuilder()
-                .addJobTitle(search.getJobTitle())
-                .toString();
-
+        final String searchUrl = ServiceUtils.getUrlSearchQuery(search);
         final JobPostFeedClient jobPostFeedClient = ServiceGenerator.createService(JobPostFeedClient.class);
         final Call<JobPostsFeed> jobPostsFeedCall = jobPostFeedClient.getJobPostFeedCall(searchUrl, ServiceUtils.getApiKey());
         jobPostsFeedCall.enqueue(new Callback<JobPostsFeed>() {
@@ -155,10 +151,12 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
     }
 
     private void refreshSubtitle() {
-        getSupportActionBar()
-                .setSubtitle(!TextUtils.isEmpty(search.getJobTitle()) ?
-                        search.getJobTitle() :
-                        getString(R.string.activity_feed_latest_label));
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setSubtitle(!TextUtils.isEmpty(search.getJobTitle()) ?
+                    search.getJobTitle() :
+                    getString(R.string.activity_feed_latest_label));
+        }
     }
 
     private void refreshAdapter() {

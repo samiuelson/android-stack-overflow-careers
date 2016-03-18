@@ -3,7 +3,6 @@ package me.urbanowicz.samuel.stackoverflowcareers.view.search;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.SearchManager;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -21,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import me.urbanowicz.samuel.stackoverflowcareers.R;
@@ -30,7 +30,11 @@ public class SearchActivity extends AppCompatActivity {
 
     public static final String EXTRA_SEARCH = "extra_search";
 
-    private EditText searchView;
+    private EditText jobTitleEditText;
+    private EditText locationEditText;
+    private CheckBox allowsRemoteCheckBox;
+    private CheckBox providesRelocationCheckBox;
+    private CheckBox providesVisaSponsorshipCheckBox;
     private Search search;
 
     @Override
@@ -39,8 +43,14 @@ public class SearchActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_search);
 
-        findViewById(R.id.scrim).setOnClickListener((v) -> dismiss());
-        searchView = (EditText) findViewById(R.id.search_view);
+        findViewById(R.id.scrim).setOnClickListener((View v) -> dismiss());
+
+        jobTitleEditText = (EditText) findViewById(R.id.search_view);
+        locationEditText = (EditText) findViewById(R.id.location);
+        allowsRemoteCheckBox = (CheckBox) findViewById(R.id.allows_remote);
+        providesRelocationCheckBox = (CheckBox) findViewById(R.id.offers_relocation);
+        providesVisaSponsorshipCheckBox = (CheckBox) findViewById(R.id.offers_visa_sponsorship);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         Drawable back = DrawableCompat.wrap(ContextCompat.getDrawable(this, R.drawable.ic_back));
         toolbar.setNavigationIcon(back);
@@ -64,8 +74,6 @@ public class SearchActivity extends AppCompatActivity {
         }
 
         overridePendingTransition(0, 0);
-
-        searchView.requestFocus();
     }
 
     @Override
@@ -82,8 +90,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void setupSearchView() {
-        searchView.setHint("Job title");
-        searchView.setOnEditorActionListener((v, actionId, event) -> {
+        jobTitleEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 finishWithResult();
                 return true;
@@ -91,8 +98,14 @@ public class SearchActivity extends AppCompatActivity {
             return false;
         });
         if (!TextUtils.isEmpty(search.getJobTitle())) {
-            searchView.setText(search.getJobTitle());
+            jobTitleEditText.setText(search.getJobTitle());
         }
+        if (!TextUtils.isEmpty(search.getLocation())) {
+            locationEditText.setText(search.getLocation());
+        }
+        allowsRemoteCheckBox.setChecked(search.isAllowsRemote());
+        providesRelocationCheckBox.setChecked(search.isProvidesRelocation());
+        providesVisaSponsorshipCheckBox.setChecked(search.isProvidesVisaSponsorship());
     }
 
     private void dismiss() {
@@ -104,11 +117,25 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void finishWithResult() {
-        String jobTitle = searchView.getText().toString();
-        Search search = new Search(jobTitle, "", 100, "", false, false, false);
+        final String jobTitle = jobTitleEditText.getText().toString();
+        final String location = locationEditText.getText().toString();
+        final boolean allowsRemote = allowsRemoteCheckBox.isChecked();
+        final boolean offersVisaSponsorship = providesVisaSponsorshipCheckBox.isChecked();
+        final boolean offersRelocation = providesRelocationCheckBox.isChecked();
+
+        final Search search = new Search(
+                jobTitle,
+                location,
+                100,
+                "",
+                allowsRemote,
+                offersRelocation,
+                offersVisaSponsorship);
+
         Intent result = new Intent();
         result.putExtra(EXTRA_SEARCH, search);
         setResult(RESULT_OK, result);
+
         dismiss();
     }
 

@@ -1,5 +1,7 @@
 package me.urbanowicz.samuel.stackoverflowcareers.service;
 
+import me.urbanowicz.samuel.stackoverflowcareers.domain.Search;
+
 public class ServiceUtils {
 
     public static String getApiKey() {
@@ -24,6 +26,18 @@ public class ServiceUtils {
                 .append("&offersrelocation=").append(providesRelocation)
                 .append("&offersvisasponsorship=").append(providesVisaSponsorship)
                 .toString();
+    }
+
+    public static String getUrlSearchQuery(Search search) {
+        return getUrlWithSearchQuery(
+                search.getJobTitle(),
+                search.getLocation(),
+                search.getDistance(),
+                search.getDistanceUnits(),
+                search.isAllowsRemote(),
+                search.isProvidesRelocation(),
+                search.isProvidesVisaSponsorship()
+        );
     }
 
     public static class SearchQueryUrlBuilder {

@@ -13,9 +13,9 @@ public class ServiceUtils {
             String location,
             int distance,
             String distanceUnits,
-            boolean allowsRemote,
-            boolean providesRelocation,
-            boolean providesVisaSponsorship
+            String /*boolean*/ allowsRemote,
+            String /*boolean*/ providesRelocation,
+            String /*boolean*/ providesVisaSponsorship
     ) {
         return new StringBuilder("webpage/url:http://careers.stackoverflow.com/jobs?")
                 .append("searchTerm=").append(jobTitle)
@@ -34,9 +34,9 @@ public class ServiceUtils {
                 search.getLocation(),
                 search.getDistance(),
                 search.getDistanceUnits(),
-                search.isAllowsRemote(),
-                search.isProvidesRelocation(),
-                search.isProvidesVisaSponsorship()
+                search.isAllowsRemote()? "true" : "",
+                search.isProvidesRelocation()? "true" : "",
+                search.isProvidesVisaSponsorship()? "true" : ""
         );
     }
 
@@ -91,9 +91,9 @@ public class ServiceUtils {
                     location,
                     distance,
                     distanceUnits,
-                    allowsRemote,
-                    providesRelocation,
-                    providesVisaSponsorship
+                    allowsRemote? "true" : "",
+                    providesRelocation? "true" : "",
+                    providesVisaSponsorship? "true" : ""
             );
         }
     }

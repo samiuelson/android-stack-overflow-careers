@@ -107,4 +107,10 @@
     <string name="share_job_title">Share the job!</string>
     <string name="action_search_label">Search</string>
     <string name="activity_search_name">Search</string>
+    <string name="search_hint_job_title">Job title</string>
+    <string name="search_hint_location">Location</string>
+    <string name="search_allows_remote_label">Allows remote</string>
+    <string name="search_offers_relocation_label">Offers relocation</string>
+    <string name="search_offers_visa_sponsorship_label">Offers Visa Sponsorship</string>
+    <string name="activity_feed_latest_label">Latest feed</string>
 </resources>

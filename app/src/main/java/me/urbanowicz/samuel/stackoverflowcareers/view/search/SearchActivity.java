@@ -19,15 +19,16 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
 import me.urbanowicz.samuel.stackoverflowcareers.R;
+import me.urbanowicz.samuel.stackoverflowcareers.domain.Search;
 
 public class SearchActivity extends AppCompatActivity {
+
+    public static final String EXTRA_SEARCH= "extra_search";
 
     private EditText searchView;
     private String query;
@@ -104,8 +105,9 @@ public class SearchActivity extends AppCompatActivity {
 
     private void finishWithResult() {
         query = searchView.getText().toString();
+        Search search = new Search();
         Intent result = new Intent();
-        result.putExtra(SearchManager.QUERY, query);
+        result.putExtra(EXTRA_SEARCH, search);
         setResult(RESULT_OK, result);
         dismiss();
     }

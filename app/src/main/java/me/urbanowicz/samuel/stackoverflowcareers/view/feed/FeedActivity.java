@@ -113,9 +113,9 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == KEY_SEARCH_RESULT) {
-                final String query = data.getStringExtra(SearchManager.QUERY);
-                this.query = query == null? "" : query;
-                getSupportActionBar().setSubtitle(query);
+                final String jobTitle = data.getStringExtra(SearchActivity.EXTRA_JOB_TITLE);
+                this.query = jobTitle == null? "" : jobTitle;
+                getSupportActionBar().setSubtitle(jobTitle);
                 updateFeed();
             } else {
                 super.onActivityResult(requestCode, resultCode, data);

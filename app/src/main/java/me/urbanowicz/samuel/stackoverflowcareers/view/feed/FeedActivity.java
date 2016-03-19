@@ -35,10 +35,14 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
     private static final String TAG = FeedActivity.class.getSimpleName();
     private static final String KEY_JOBS_FEED = "jobs_feed";
     private static final String KEY_SEARCH = "search";
+    private static final String KEY_PAGES_FETCHED_COUNT = "fetched_pages_count";
     private static final int KEY_SEARCH_RESULT = 23;
 
     private FeedRecyclerAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
+
+    // todo extract jobPostFeed, search and pagesFetchedCount to external class i.e. FeedDownoladManager
+    private int pagesFetchedCount = 0;
     private JobPostsFeed jobPostsFeed;
     private Search search;
 
@@ -63,7 +67,9 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
         feedRecyclerView.setAdapter(adapter);
 
         if (savedInstanceState != null) {
-            jobPostsFeed = (JobPostsFeed) savedInstanceState.getSerializable(KEY_JOBS_FEED);
+            this.jobPostsFeed = (JobPostsFeed) savedInstanceState.getSerializable(KEY_JOBS_FEED);
+            this.pagesFetchedCount = savedInstanceState.getInt(KEY_PAGES_FETCHED_COUNT);
+
             Search search = (Search) savedInstanceState.getSerializable(KEY_SEARCH);
             this.search = search == null? Search.EMPTY : search;
         } else {
@@ -91,6 +97,7 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
         super.onSaveInstanceState(outState);
         outState.putSerializable(KEY_JOBS_FEED, jobPostsFeed);
         outState.putSerializable(KEY_SEARCH, search);
+        outState.putInt(KEY_PAGES_FETCHED_COUNT, pagesFetchedCount);
     }
 
     @Override
@@ -126,7 +133,7 @@ public class FeedActivity extends AppCompatActivity implements FeedRecyclerAdapt
     }
 
     private void updateFeed() {
-        final String searchUrl = ServiceUtils.getUrlSearchQuery(search);
+        final String searchUrl = ServiceUtils.getUrlSearchQuery(search, 0);
         final JobPostFeedClient jobPostFeedClient = ServiceGenerator.createService(JobPostFeedClient.class);
         final Call<JobPostsFeed> jobPostsFeedCall = jobPostFeedClient.getJobPostFeedCall(searchUrl, ServiceUtils.getApiKey());
         jobPostsFeedCall.enqueue(new Callback<JobPostsFeed>() {

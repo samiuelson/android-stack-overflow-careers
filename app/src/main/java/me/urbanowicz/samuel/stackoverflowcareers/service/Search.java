@@ -1,4 +1,4 @@
-package me.urbanowicz.samuel.stackoverflowcareers.domain;
+package me.urbanowicz.samuel.stackoverflowcareers.service;
 
 import java.io.Serializable;
 

@@ -1,7 +1,5 @@
 package me.urbanowicz.samuel.stackoverflowcareers.service;
 
-import me.urbanowicz.samuel.stackoverflowcareers.domain.Search;
-
 public class ServiceUtils {
 
     public static String getApiKey() {
@@ -44,13 +42,13 @@ public class ServiceUtils {
     }
 
     public static class SearchQueryUrlBuilder {
-        private String jobTitle;
-        private String location;
-        private int distance;
-        private String distanceUnits;
-        private boolean allowsRemote;
-        private boolean providesRelocation;
-        private boolean providesVisaSponsorship;
+        private String jobTitle = "";
+        private String location = "";
+        private int distance = 0;
+        private String distanceUnits = "";
+        private boolean allowsRemote = false;
+        private boolean providesRelocation = false;
+        private boolean providesVisaSponsorship = false;
         private int page = 0;
 
         public SearchQueryUrlBuilder addJobTitle(String jobTitle) {

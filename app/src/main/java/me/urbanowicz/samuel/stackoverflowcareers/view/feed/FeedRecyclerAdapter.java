@@ -15,18 +15,32 @@ import me.urbanowicz.samuel.stackoverflowcareers.R;
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPost;
 
 
-public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapter.ViewHolder> {
+public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private final static int VIEW_TYPE_REGULAR = 23;
+    private final static int VIEW_TYPE_SPINNER = 24;
+
     private List<JobPost> jobPosts;
 
     private OnItemClickListener onItemClickListener;
+    private OnLastItemAppearedListener onLastItemAppearedListener;
 
-    public FeedRecyclerAdapter(OnItemClickListener listener) {
-        this(Collections.EMPTY_LIST, listener);
+    private boolean shouldShowFooterSpinner = true;
+
+    public FeedRecyclerAdapter(
+            OnItemClickListener listener,
+            OnLastItemAppearedListener lastItemAppearedListener
+    ) {
+        this(Collections.EMPTY_LIST, listener, lastItemAppearedListener);
     }
 
-    public FeedRecyclerAdapter(Collection<JobPost> jobPosts, OnItemClickListener listener) {
+    public FeedRecyclerAdapter(
+            Collection<JobPost> jobPosts,
+            OnItemClickListener onItemClickListener,
+            OnLastItemAppearedListener onLastItemAppearedListener
+    ) {
         this.jobPosts = new ArrayList<>(jobPosts);
-        this.onItemClickListener = listener;
+        this.onItemClickListener = onItemClickListener;
+        this.onLastItemAppearedListener = onLastItemAppearedListener;
     }
 
     public void setJobPosts(Collection<JobPost> jobPosts) {
@@ -35,43 +49,102 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(
-                LayoutInflater
-                        .from(parent.getContext())
-                        .inflate(R.layout.feed_item_view, parent, false)
-        );
+    public int getItemViewType(int position) {
+        if (getIsLastPosition(position)) {
+            return VIEW_TYPE_SPINNER;
+        }
+        return VIEW_TYPE_REGULAR;
+    }
+
+    private boolean getIsLastPosition(int position) {
+        return position == jobPosts.size();
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        final JobPost jobPost = jobPosts.get(position);
-        holder.job.setText(jobPost.getJobTitle());
-        holder.company.setText(jobPost.getCompanyName());
-        holder.location.setText(jobPost.getLocation());
-        holder.itemView.setOnClickListener((view) -> onItemClickListener.onClick(position));
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        switch (viewType) {
+            default:
+            case VIEW_TYPE_REGULAR:
+            return new RegularViewHolder(
+                    LayoutInflater
+                            .from(parent.getContext())
+                            .inflate(R.layout.feed_item_view, parent, false)
+            );
+            case VIEW_TYPE_SPINNER:
+                return new SpinnerViewHolder(
+                        LayoutInflater
+                        .from(parent.getContext())
+                        .inflate(R.layout.feed_list_spinner, parent, false)
+                );
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        int itemViewType = getItemViewType(position);
+
+        if (VIEW_TYPE_REGULAR == itemViewType) {
+            RegularViewHolder viewHolder = (RegularViewHolder) holder;
+            final JobPost jobPost = jobPosts.get(position);
+            viewHolder.job.setText(jobPost.getJobTitle());
+            viewHolder.company.setText(jobPost.getCompanyName());
+            viewHolder.location.setText(jobPost.getLocation());
+            viewHolder.cardContentContainer.setOnClickListener((view) -> onItemClickListener.onClick(position));
+        } else if (VIEW_TYPE_SPINNER == itemViewType) {
+            SpinnerViewHolder viewHolder = (SpinnerViewHolder) holder;
+            onLastItemAppearedListener.onLastItemAppeared();
+        }
+
     }
 
     @Override
     public int getItemCount() {
-        return jobPosts.size();
+        if (jobPosts == null) {
+            return 0;
+        }
+        if (jobPosts.size() == 0) {
+            return 0;
+        }
+        if (shouldShowFooterSpinner) {
+            return jobPosts.size() + 1;//adds 1 for spinner
+        } else {
+            return jobPosts.size();
+        }
+
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    public void setShouldShowFooterSpinner(boolean shouldShowFooterSpinner) {
+        this.shouldShowFooterSpinner = shouldShowFooterSpinner;
+        notifyDataSetChanged();
+    }
+
+    static class RegularViewHolder extends RecyclerView.ViewHolder {
         final TextView job;
         final TextView company;
         final TextView location;
+        final ViewGroup cardContentContainer;
 
-        public ViewHolder(View itemView) {
+        public RegularViewHolder(View itemView) {
             super(itemView);
             job = (TextView) itemView.findViewById(R.id.job_title);
             company = (TextView) itemView.findViewById(R.id.company_name);
             location = (TextView) itemView.findViewById(R.id.location);
+            cardContentContainer = (ViewGroup) itemView.findViewById(R.id.card_content);
+        }
+    }
+
+    static class SpinnerViewHolder extends RecyclerView.ViewHolder {
+        public SpinnerViewHolder(View itemView) {
+            super(itemView);
         }
     }
 
     public interface OnItemClickListener {
         void onClick(int position);
+    }
+
+    public interface OnLastItemAppearedListener {
+        void onLastItemAppeared();
     }
 
 

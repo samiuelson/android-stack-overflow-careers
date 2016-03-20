@@ -5,6 +5,10 @@ import java.util.LinkedList;
 
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPost;
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPostsFeed;
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 public class JobPostFeedManager {
 
@@ -19,24 +23,51 @@ public class JobPostFeedManager {
 
     private JobPostFeedManager() {}
 
-    private JobPostsFeed jobPostsFeed = JobPostsFeed.EMPTY;
+    private Collection<JobPost> jobPosts = new LinkedList<>();
     private MoreOfeersPossibility moreOfeersPossibility = MoreOfeersPossibility.PROBABLE;
     private int currentPage = 0;
+    private Search search = Search.EMPTY;
 
 
     public void downloadFeedForNewSearch(Search search, JobPostsFeedManagerCallback callback) {
-        currentPage = 0;
-        Collection<JobPost> jobPosts = new LinkedList<>(); // todo download new feed
+        this.currentPage = 0;
+        this.search = search;
+
+        fetchJobPosts(callback);
     }
 
     public void downloadFeedNextPage(JobPostsFeedManagerCallback callback) {
         currentPage++;
-        Collection<JobPost> jobPosts = new LinkedList<>(); // todo download next page and add to previous job posts
-        callback.onFeedUpdated(jobPosts);
 
-        if (jobPosts.size() == 0) {
-            moreOfeersPossibility = MoreOfeersPossibility.IMPOSSIBLE;
-        }
+        fetchJobPosts(callback);
+    }
+
+    private void fetchJobPosts(JobPostsFeedManagerCallback callback) {
+        final String searchUrl = ServiceUtils.getUrlSearchQuery(search, currentPage);
+        final JobPostFeedClient jobPostFeedClient = ServiceGenerator.createService(JobPostFeedClient.class);
+        final Call<JobPostsFeed> jobPostsFeedCall = jobPostFeedClient.getJobPostFeedCall(searchUrl, ServiceUtils.getApiKey());
+        jobPostsFeedCall.enqueue(new Callback<JobPostsFeed>() {
+            @Override
+            public void onResponse(Response<JobPostsFeed> response, Retrofit retrofit) {
+                if (response.body() != null) {
+                    JobPostsFeed feed = response.body();
+                    Collection<JobPost> jobPosts = feed.getJobPosts().get();
+                    if (jobPosts.size() == 0) {
+                        moreOfeersPossibility = MoreOfeersPossibility.IMPOSSIBLE;
+                    }
+                    JobPostFeedManager.this.jobPosts.clear();
+                    JobPostFeedManager.this.jobPosts.addAll(jobPosts);
+                    callback.onFeedUpdated(jobPosts, moreOfeersPossibility);
+                } else {
+                    // todo notify about error
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                // todo notify about error
+            }
+        });
     }
 
     public enum MoreOfeersPossibility {
@@ -47,6 +78,6 @@ public class JobPostFeedManager {
      * Interface providing callback method for a view
      */
     public interface JobPostsFeedManagerCallback {
-        void onFeedUpdated(Collection<JobPost> jobPosts);
+        void onFeedUpdated(Collection<JobPost> jobPosts, MoreOfeersPossibility moreOfeersPossibility);
     }
 }

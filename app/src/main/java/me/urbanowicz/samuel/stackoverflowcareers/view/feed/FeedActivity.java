@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import me.urbanowicz.samuel.stackoverflowcareers.R;
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPost;
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPostsFeed;
+import me.urbanowicz.samuel.stackoverflowcareers.service.JobPostFeedManager;
 import me.urbanowicz.samuel.stackoverflowcareers.service.Search;
 import me.urbanowicz.samuel.stackoverflowcareers.service.JobPostFeedClient;
 import me.urbanowicz.samuel.stackoverflowcareers.service.ServiceGenerator;
@@ -47,6 +48,7 @@ public class FeedActivity extends AppCompatActivity implements
     private int pagesFetchedCount = 0;
     private JobPostsFeed jobPostsFeed;
     private Search search;
+    private JobPostFeedManager feedManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,7 +58,7 @@ public class FeedActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_feed);
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        setTitle("Stack Overflow Careers");
+        setTitle(getString(R.string.app_name_title));
 
         RecyclerView feedRecyclerView = (RecyclerView) findViewById(R.id.feedItemsRecyclerView);
 
@@ -67,6 +69,8 @@ public class FeedActivity extends AppCompatActivity implements
         feedRecyclerView.hasFixedSize();
         adapter = new FeedRecyclerAdapter(this, this);
         feedRecyclerView.setAdapter(adapter);
+
+        feedManager = JobPostFeedManager.getInstance();
 
         if (savedInstanceState != null) {
             this.jobPostsFeed = (JobPostsFeed) savedInstanceState.getSerializable(KEY_JOBS_FEED);

@@ -1,4 +1,4 @@
-package me.urbanowicz.samuel.stackoverflowcareers.domain;
+package me.urbanowicz.samuel.stackoverflowcareers.service;
 
 import java.io.Serializable;
 
@@ -54,6 +54,33 @@ public class Search implements Serializable {
 
     public boolean isProvidesVisaSponsorship() {
         return providesVisaSponsorship;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(Search.this == o) {
+            return true;
+        }
+        if (!(o instanceof Search)) {
+            return false;
+        }
+        Search another = (Search) o;
+        if (!this.jobTitle.equalsIgnoreCase(another.getJobTitle())) {
+            return false;
+        }
+        if (this.allowsRemote != another.allowsRemote) {
+            return false;
+        }
+        if (!this.location.equalsIgnoreCase(another.getLocation())) {
+            return false;
+        }
+        if (this.providesRelocation != another.providesRelocation) {
+            return false;
+        }
+        if (this.providesVisaSponsorship != another.providesVisaSponsorship) {
+            return false;
+        }
+        return true;
     }
 
     public final static Search EMPTY = new Search("", "", 100, "", false, false, false);

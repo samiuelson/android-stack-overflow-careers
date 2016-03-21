@@ -24,7 +24,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 
 import me.urbanowicz.samuel.stackoverflowcareers.R;
-import me.urbanowicz.samuel.stackoverflowcareers.domain.Search;
+import me.urbanowicz.samuel.stackoverflowcareers.service.Search;
 
 public class SearchActivity extends AppCompatActivity {
 

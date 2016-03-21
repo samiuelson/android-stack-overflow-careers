@@ -113,4 +113,5 @@
     <string name="search_offers_relocation_label">Offers relocation</string>
     <string name="search_offers_visa_sponsorship_label">Offers Visa Sponsorship</string>
     <string name="activity_feed_latest_label">Latest feed</string>
+    <string name="app_name_title">Stack Overflow Careers</string>
 </resources>

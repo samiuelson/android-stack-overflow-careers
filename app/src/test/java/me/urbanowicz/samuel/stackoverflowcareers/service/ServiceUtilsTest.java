@@ -18,9 +18,10 @@ public class ServiceUtilsTest {
                 .addJobTitle("android")
                 .addProvidesRelocation(true)
                 .addProvidesVisaSponsorship(false)
+                .addPage(0)
                 .toString();
 
         assertNotNull(url);
-        assertEquals(url, "webpage/url:http://careers.stackoverflow.com/jobs?searchTerm=android&location=London&range=100&distanceUnits=km&allowsremote=true&offersrelocation=true&offersvisasponsorship=false");
+        assertEquals(url, "webpage/url:http://careers.stackoverflow.com/jobs?searchTerm=android&location=London&range=100&distanceUnits=km&allowsremote=true&offersrelocation=true&offersvisasponsorship=&pg=0");
     }
 }

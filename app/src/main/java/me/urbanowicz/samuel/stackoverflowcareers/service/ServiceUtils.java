@@ -1,7 +1,5 @@
 package me.urbanowicz.samuel.stackoverflowcareers.service;
 
-import me.urbanowicz.samuel.stackoverflowcareers.domain.Search;
-
 public class ServiceUtils {
 
     public static String getApiKey() {
@@ -15,7 +13,8 @@ public class ServiceUtils {
             String distanceUnits,
             String /*boolean*/ allowsRemote,
             String /*boolean*/ providesRelocation,
-            String /*boolean*/ providesVisaSponsorship
+            String /*boolean*/ providesVisaSponsorship,
+            int page
     ) {
         return new StringBuilder("webpage/url:http://careers.stackoverflow.com/jobs?")
                 .append("searchTerm=").append(jobTitle)
@@ -25,10 +24,11 @@ public class ServiceUtils {
                 .append("&allowsremote=").append(allowsRemote)
                 .append("&offersrelocation=").append(providesRelocation)
                 .append("&offersvisasponsorship=").append(providesVisaSponsorship)
+                .append("&pg=").append(String.valueOf(page))
                 .toString();
     }
 
-    public static String getUrlSearchQuery(Search search) {
+    public static String getUrlSearchQuery(Search search, int page) {
         return getUrlWithSearchQuery(
                 search.getJobTitle(),
                 search.getLocation(),
@@ -36,18 +36,20 @@ public class ServiceUtils {
                 search.getDistanceUnits(),
                 search.isAllowsRemote()? "true" : "",
                 search.isProvidesRelocation()? "true" : "",
-                search.isProvidesVisaSponsorship()? "true" : ""
+                search.isProvidesVisaSponsorship()? "true" : "",
+                page
         );
     }
 
     public static class SearchQueryUrlBuilder {
-        private String jobTitle;
-        private String location;
-        private int distance;
-        private String distanceUnits;
-        private boolean allowsRemote;
-        private boolean providesRelocation;
-        private boolean providesVisaSponsorship;
+        private String jobTitle = "";
+        private String location = "";
+        private int distance = 0;
+        private String distanceUnits = "";
+        private boolean allowsRemote = false;
+        private boolean providesRelocation = false;
+        private boolean providesVisaSponsorship = false;
+        private int page = 0;
 
         public SearchQueryUrlBuilder addJobTitle(String jobTitle) {
             this.jobTitle = jobTitle;
@@ -84,6 +86,11 @@ public class ServiceUtils {
             return this;
         }
 
+        public SearchQueryUrlBuilder addPage(int page) {
+            this.page = page;
+            return this;
+        }
+
         @Override
         public String toString() {
             return getUrlWithSearchQuery(
@@ -93,7 +100,8 @@ public class ServiceUtils {
                     distanceUnits,
                     allowsRemote? "true" : "",
                     providesRelocation? "true" : "",
-                    providesVisaSponsorship? "true" : ""
+                    providesVisaSponsorship? "true" : "",
+                    page
             );
         }
     }

@@ -36,7 +36,9 @@ public class JobPostClientTest {
     @Test public void
     shouldDownloadJobPostFeedForTerm() throws IOException {
         Call<JobPostsFeed> call = client.getJobPostFeedCall(
-                new ServiceUtils.SearchQueryUrlBuilder().addJobTitle("android").toString(),
+                new ServiceUtils.SearchQueryUrlBuilder()
+                        .addJobTitle("android")
+                        .toString(),
                 ServiceUtils.getApiKey()
         );
         assertNotNull(call);
@@ -44,7 +46,6 @@ public class JobPostClientTest {
         Response<JobPostsFeed> response = call.execute();
         assertNotNull(response);
 
-        System.out.print(response.errorBody());
         assertTrue(response.isSuccess());
 
         JobPostsFeed feed = response.body();

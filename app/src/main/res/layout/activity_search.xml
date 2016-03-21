@@ -83,7 +83,10 @@
                         android:id="@+id/location"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="12dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="12dp"
+                        android:layout_marginLeft="18dp"
+                        android:layout_marginRight="18dp"
                         android:background="@android:color/transparent"
                         android:hint="@string/search_hint_location"
                         android:singleLine="true" />

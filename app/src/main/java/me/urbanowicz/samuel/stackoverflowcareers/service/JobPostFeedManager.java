@@ -1,5 +1,6 @@
 package me.urbanowicz.samuel.stackoverflowcareers.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -27,7 +28,7 @@ public class JobPostFeedManager {
 
     private JobPostFeedManager() {}
 
-    private Collection<JobPost> jobPosts = new LinkedList<>();
+    private ArrayList<JobPost> jobPosts = new ArrayList<>();
     private MoreOfeersPossibility moreOfeersPossibility = MoreOfeersPossibility.PROBABLE;
     private int currentPage = 0;
     private Search search = Search.EMPTY;
@@ -76,7 +77,7 @@ public class JobPostFeedManager {
         });
     }
 
-    public Collection<JobPost> getCurrentJobPosts() {
+    public ArrayList<JobPost> getCurrentJobPosts() {
         return this.jobPosts;
     }
 

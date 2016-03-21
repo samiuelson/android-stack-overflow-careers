@@ -2,7 +2,6 @@ package me.urbanowicz.samuel.stackoverflowcareers.view.feed;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -16,38 +15,27 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import java.util.Collection;
 
 import me.urbanowicz.samuel.stackoverflowcareers.R;
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPost;
-import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPostsFeed;
 import me.urbanowicz.samuel.stackoverflowcareers.service.JobPostFeedManager;
 import me.urbanowicz.samuel.stackoverflowcareers.service.Search;
-import me.urbanowicz.samuel.stackoverflowcareers.service.JobPostFeedClient;
-import me.urbanowicz.samuel.stackoverflowcareers.service.ServiceGenerator;
-import me.urbanowicz.samuel.stackoverflowcareers.service.ServiceUtils;
 import me.urbanowicz.samuel.stackoverflowcareers.view.detail.DetailActivity;
 import me.urbanowicz.samuel.stackoverflowcareers.view.search.SearchActivity;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 
 public class FeedActivity extends AppCompatActivity implements
-        FeedRecyclerAdapter.OnItemClickListener, FeedRecyclerAdapter.OnLastItemAppearedListener {
+        FeedRecyclerAdapter.OnItemClickListener, FeedRecyclerAdapter.OnLastItemAppearedListener,
+        JobPostFeedManager.JobPostsFeedManagerCallback {
     private static final String TAG = FeedActivity.class.getSimpleName();
-    private static final String KEY_JOBS_FEED = "jobs_feed";
-    private static final String KEY_SEARCH = "search";
-    private static final String KEY_PAGES_FETCHED_COUNT = "fetched_pages_count";
+    private static final String KEY_SEARCH = "lastSearch";
     private static final int KEY_SEARCH_RESULT = 23;
 
     private FeedRecyclerAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    // todo extract jobPostFeed, search and pagesFetchedCount to external class {@link JobPostFeedDownloadManager}
-    private int pagesFetchedCount = 0;
-    private JobPostsFeed jobPostsFeed;
-    private Search search;
+    // todo extract jobPostFeed, lastSearch and pagesFetchedCount to external class {@link JobPostFeedDownloadManager}
+    private Search lastSearch;
     private JobPostFeedManager feedManager;
 
     @Override
@@ -63,7 +51,7 @@ public class FeedActivity extends AppCompatActivity implements
         RecyclerView feedRecyclerView = (RecyclerView) findViewById(R.id.feedItemsRecyclerView);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
-        swipeRefreshLayout.setOnRefreshListener(this::updateFeed);
+        swipeRefreshLayout.setOnRefreshListener(feedManager.downloadFeedForNewSearch(lastSearch, ));
 
         feedRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         feedRecyclerView.hasFixedSize();
@@ -73,37 +61,25 @@ public class FeedActivity extends AppCompatActivity implements
         feedManager = JobPostFeedManager.getInstance();
 
         if (savedInstanceState != null) {
-            this.jobPostsFeed = (JobPostsFeed) savedInstanceState.getSerializable(KEY_JOBS_FEED);
-            this.pagesFetchedCount = savedInstanceState.getInt(KEY_PAGES_FETCHED_COUNT);
-
             Search search = (Search) savedInstanceState.getSerializable(KEY_SEARCH);
-            this.search = search == null? Search.EMPTY : search;
+            this.lastSearch = search == null ? Search.EMPTY : search;
         } else {
-            jobPostsFeed = JobPostsFeed.EMPTY;
-            search = Search.EMPTY;
+            lastSearch = Search.EMPTY;
         }
 
         refreshSubtitle();
 
-        if (jobPostsFeed != null && jobPostsFeed.getJobPosts().isPresent() && jobPostsFeed.getJobPosts().get().size() > 0) {
+        if (feedManager.getCurrentSearch() != null && feedManager.getCurrentJobPosts().size() > 0) {
             refreshAdapter();
         } else {
-            updateFeed();
+            feedManager.downloadFeedForNewSearch(lastSearch, );
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume");
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(KEY_JOBS_FEED, jobPostsFeed);
-        outState.putSerializable(KEY_SEARCH, search);
-        outState.putInt(KEY_PAGES_FETCHED_COUNT, pagesFetchedCount);
+        outState.putSerializable(KEY_SEARCH, lastSearch);
     }
 
     @Override
@@ -129,60 +105,62 @@ public class FeedActivity extends AppCompatActivity implements
         if (resultCode == RESULT_OK) {
             if (requestCode == KEY_SEARCH_RESULT) {
                 final Search search = (Search) data.getSerializableExtra(SearchActivity.EXTRA_SEARCH);
-                this.search = search == null? Search.EMPTY : search;
+                this.lastSearch = search == null ? Search.EMPTY : search;
+                if (!this.lastSearch.equals(search)) {
+                    feedManager.downloadFeedForNewSearch(lastSearch, );
+                }
                 refreshSubtitle();
-                updateFeed();
             } else {
                 super.onActivityResult(requestCode, resultCode, data);
             }
         }
     }
 
-    private void updateFeed() {
-        final String searchUrl = ServiceUtils.getUrlSearchQuery(search, pagesFetchedCount);
-        final JobPostFeedClient jobPostFeedClient = ServiceGenerator.createService(JobPostFeedClient.class);
-        final Call<JobPostsFeed> jobPostsFeedCall = jobPostFeedClient.getJobPostFeedCall(searchUrl, ServiceUtils.getApiKey());
-        jobPostsFeedCall.enqueue(new Callback<JobPostsFeed>() {
-            @Override
-            public void onResponse(Response<JobPostsFeed> response, Retrofit retrofit) {
-                if (response.body() != null) {
-                    if (JobPostsFeed.EMPTY.equals(jobPostsFeed)) {
-                        jobPostsFeed = response.body();
-                    } else {
-                        JobPostsFeed temp = response.body();
-                        if (temp.getJobPosts().get().size() == 0 ) {
-                            adapter.setShouldShowFooterSpinner(false);
-                        } else {
-                            jobPostsFeed.getJobPosts().get().addAll(temp.getJobPosts().get());
-                        }
-                    }
-                } else {
-                    setError("Feed is null for search term: " + searchUrl);
-                }
-                swipeRefreshLayout.setRefreshing(false);
-                refreshAdapter();
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                jobPostsFeed = JobPostsFeed.EMPTY;
-                setError(t.getLocalizedMessage());
-            }
-        });
-
-    }
+//    private void updateFeed() {
+//        final String searchUrl = ServiceUtils.getUrlSearchQuery(lastSearch, pagesFetchedCount);
+//        final JobPostFeedClient jobPostFeedClient = ServiceGenerator.createService(JobPostFeedClient.class);
+//        final Call<JobPostsFeed> jobPostsFeedCall = jobPostFeedClient.getJobPostFeedCall(searchUrl, ServiceUtils.getApiKey());
+//        jobPostsFeedCall.enqueue(new Callback<JobPostsFeed>() {
+//            @Override
+//            public void onResponse(Response<JobPostsFeed> response, Retrofit retrofit) {
+//                if (response.body() != null) {
+//                    if (JobPostsFeed.EMPTY.equals(jobPostsFeed)) {
+//                        jobPostsFeed = response.body();
+//                    } else {
+//                        JobPostsFeed temp = response.body();
+//                        if (temp.getJobPosts().get().size() == 0 ) {
+//                            adapter.setShouldShowFooterSpinner(false);
+//                        } else {
+//                            jobPostsFeed.getJobPosts().get().addAll(temp.getJobPosts().get());
+//                        }
+//                    }
+//                } else {
+//                    setError("Feed is null for lastSearch term: " + searchUrl);
+//                }
+//                swipeRefreshLayout.setRefreshing(false);
+//                refreshAdapter();
+//            }
+//
+//            @Override
+//            public void onFailure(Throwable t) {
+//                jobPostsFeed = JobPostsFeed.EMPTY;
+//                setError(t.getLocalizedMessage());
+//            }
+//        });
+//
+//    }
 
     private void refreshSubtitle() {
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
-            ab.setSubtitle(!TextUtils.isEmpty(search.getJobTitle()) ?
-                    search.getJobTitle() :
+            ab.setSubtitle(!TextUtils.isEmpty(lastSearch.getJobTitle()) ?
+                    lastSearch.getJobTitle() :
                     getString(R.string.activity_feed_latest_label));
         }
     }
 
     private void refreshAdapter() {
-        adapter.setJobPosts(jobPostsFeed.getJobPosts().get());
+        adapter.setJobPosts(feedManager.getCurrentJobPosts());
     }
 
     private void setError(String info) {
@@ -191,28 +169,31 @@ public class FeedActivity extends AppCompatActivity implements
 
     private void actionShowSearch() {
         Intent intent = new Intent(this, SearchActivity.class);
-        intent.putExtra(SearchActivity.EXTRA_SEARCH, search);
+        intent.putExtra(SearchActivity.EXTRA_SEARCH, lastSearch);
         startActivityForResult(intent, KEY_SEARCH_RESULT);
     }
 
     // FeedRecyclerAdapter.OnItemClickListener
     @Override
     public void onClick(int position) {
-        JobPost jobPostClicked;
-        if (jobPostsFeed.getJobPosts().isPresent()) {
-            jobPostClicked = new ArrayList<>(jobPostsFeed.getJobPosts().get()).get(position);
-        } else {
-            jobPostClicked = JobPost.EMPTY;
-        }
+        JobPost jobPostClicked = feedManager.getCurrentJobPosts().get(position);
         DetailActivity.startActivity(this, jobPostClicked);
     }
 
     // FeedRecyclerActivity.OnLastItemAppearedListener
     @Override
     public void onLastItemAppeared() {
-        pagesFetchedCount++;
         Log.d(TAG, "onLastItemAppeared() called");
-//        new Handler().postDelayed((Runnable) () -> adapter.setShouldShowFooterSpinner(false), 1000);
-        updateFeed();
+        feedManager.downloadFeedNextPage();
+    }
+
+    // JobPostFeedManager.JobPostsFeedManagerCallback
+    @Override
+    public void onFeedUpdated(Collection<JobPost> jobPosts, JobPostFeedManager.MoreOfeersPossibility moreOfeersPossibility) {
+
+    }
+    @Override
+    public void onFeedUpdateError(String errorMessage) {
+
     }
 }

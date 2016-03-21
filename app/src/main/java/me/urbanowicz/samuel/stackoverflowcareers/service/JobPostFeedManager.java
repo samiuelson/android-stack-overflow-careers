@@ -2,7 +2,6 @@ package me.urbanowicz.samuel.stackoverflowcareers.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPost;
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPostsFeed;
@@ -64,15 +63,13 @@ public class JobPostFeedManager {
                     JobPostFeedManager.this.jobPosts.addAll(jobPosts);
                     callback.onFeedUpdated(JobPostFeedManager.this.jobPosts, moreOfeersPossibility);
                 } else {
-                    // todo notify about error
                     callback.onFeedUpdateError("");
                 }
             }
 
             @Override
             public void onFailure(Throwable t) {
-                // todo notify about error
-                callback.onFeedUpdateError("");
+                callback.onFeedUpdateError(t.getMessage());
             }
         });
     }

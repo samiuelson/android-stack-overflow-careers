@@ -59,6 +59,8 @@ public class JobPostFeedManager {
                     Collection<JobPost> jobPosts = feed.getJobPosts().get();
                     if (jobPosts.size() == 0) {
                         moreOfeersPossibility = MoreOfeersPossibility.IMPOSSIBLE;
+                    } else {
+                        moreOfeersPossibility = MoreOfeersPossibility.PROBABLE;
                     }
                     JobPostFeedManager.this.jobPosts.addAll(jobPosts);
                     callback.onFeedUpdated(JobPostFeedManager.this.jobPosts, moreOfeersPossibility);

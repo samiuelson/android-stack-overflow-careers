@@ -26,4 +26,6 @@
     <string name="search_offers_visa_sponsorship_label">Offers Visa Sponsorship</string>
     <string name="activity_feed_latest_label">Latest feed</string>
     <string name="app_name_title">Stack Overflow Careers</string>
+    <string name="feed_general_error">There was error connecting to server</string>
+    <string name="button_label_retry">Retry</string>
 </resources>

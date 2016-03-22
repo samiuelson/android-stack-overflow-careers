@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import me.urbanowicz.samuel.stackoverflowcareers.R;
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPost;
@@ -28,12 +29,21 @@ public class DetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         webView = (WebView) findViewById(R.id.web_view);
+        webView.setWebViewClient(new WebViewClient());
         webView.getSettings().setJavaScriptEnabled(true);
 
         findViewById(R.id.fab).setOnClickListener((v) -> actionShare());
 
         setupAppBarValues();
         loadContent();
+    }
+
+    private void loadContent() {
+        webView.loadUrl(jobPost.getJobLink().toString());
+    }
+
+    private void setupAppBarValues() {
+        setTitle(jobPost.getJobTitle());
     }
 
     @Override
@@ -45,14 +55,6 @@ public class DetailActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void setupAppBarValues() {
-        setTitle(jobPost.getJobTitle());
-    }
-
-    private void loadContent() {
-        webView.loadUrl(jobPost.getJobLink().toString());
     }
 
     private void actionShare() {

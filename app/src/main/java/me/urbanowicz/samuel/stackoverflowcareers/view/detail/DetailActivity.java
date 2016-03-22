@@ -3,17 +3,10 @@ package me.urbanowicz.samuel.stackoverflowcareers.view.detail;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.ProgressBar;
-
-import com.daasuu.ahp.AnimateHorizontalProgressBar;
 
 import me.urbanowicz.samuel.stackoverflowcareers.R;
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPost;
@@ -23,7 +16,6 @@ public class DetailActivity extends AppCompatActivity {
 
     private JobPost jobPost;
     private WebView webView;
-    private AnimateHorizontalProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,20 +27,8 @@ public class DetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        progressBar = (AnimateHorizontalProgressBar) findViewById(R.id.progress_bar);
         webView = (WebView) findViewById(R.id.web_view);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.setWebChromeClient(new WebChromeClient() {
-            @Override
-            public void onProgressChanged(WebView view, int newProgress) {
-                if (newProgress < 100) {
-                    progressBar.setVisibility(View.VISIBLE);
-                    progressBar.setProgressWithAnim(newProgress);
-                } else {
-                    progressBar.setVisibility(View.GONE);
-                }
-            }
-        });
 
         findViewById(R.id.fab).setOnClickListener((v) -> actionShare());
 

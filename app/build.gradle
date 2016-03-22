@@ -9,7 +9,7 @@ android {
         applicationId "me.urbanowicz.samuel.stackoverflowcareers"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 1
+        versionCode 4
         versionName "1.0"
     }
     buildTypes {
@@ -35,5 +35,4 @@ dependencies {
     compile 'io.reactivex:rxjava:1.0.+'
     compile 'io.reactivex:rxandroid:0.23.+'
     compile 'com.annimon:stream:1.0.6'
-    compile 'com.daasuu:animateHorizontalProgressBar:0.2.1'
 }

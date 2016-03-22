@@ -31,7 +31,7 @@ public class FeedActivity extends AppCompatActivity implements
         JobPostFeedManager.JobPostsFeedManagerCallback {
 
     private static final String TAG = FeedActivity.class.getSimpleName();
-    private static final String KEY_SEARCH = "lastSearch";
+    private static final String KEY_SEARCH = "lastSearchKey";
     private static final int KEY_SEARCH_RESULT = 23;
 
     private FeedRecyclerAdapter adapter;
@@ -139,8 +139,8 @@ public class FeedActivity extends AppCompatActivity implements
     private void setError(String info) {
         Toast.makeText(FeedActivity.this, info, Toast.LENGTH_LONG).show();
         Snackbar
-                .make(findViewById(R.id.coordinator), "There was error connecting to server", Snackbar.LENGTH_LONG)
-                .setAction("Retry", (View v) -> feedManager.downloadFeedForNewSearch(lastSearch, this))
+                .make(findViewById(R.id.coordinator), R.string.feed_general_error, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.button_label_retry, (View v) -> feedManager.downloadFeedForNewSearch(lastSearch, this))
                 .show();
 
     }

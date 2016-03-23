@@ -4,7 +4,8 @@
 _Life is too short, work somewhere awesome!_
 #### Stuff:
 * Feed is fetched using import.io crawler
-* Retrofit
+* Retrofit 2.0
+* Material design
 
 #### Google Play link:
 * https://play.google.com/store/apps/details?id=me.urbanowicz.samuel.stackoverflowcareers

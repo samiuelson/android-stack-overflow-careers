@@ -1,6 +1,7 @@
 # android-stack-overflow-careers
 
 ### Simple client app for StackOverflow Careers
+_Life is too short, work somewhere awesome!_
 #### Stuff:
 * Feed is fetched using import.io crawler
 * Retrofit

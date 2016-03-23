@@ -8,6 +8,8 @@
 #### Google Play link:
 * https://play.google.com/store/apps/details?id=me.urbanowicz.samuel.stackoverflowcareers
 
+#### Screenshots
+![alt tag](https://github.com/samiuelson/android-stack-overflow-careers/blob/master/art/feed.png)
 
 
 

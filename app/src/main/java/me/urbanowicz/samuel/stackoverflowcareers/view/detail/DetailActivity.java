@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -29,8 +31,20 @@ public class DetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         webView = (WebView) findViewById(R.id.web_view);
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                return false;
+            }
+        });
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setUseWideViewPort(true);
+        webView.getSettings().setDisplayZoomControls(false);
+        webView.getSettings().setBuiltInZoomControls(true);
+
+        webView.getSettings().setLoadWithOverviewMode(true);
+        final String ua = "Mobile";
+        webView.getSettings().setUserAgentString(ua);
 
         findViewById(R.id.fab).setOnClickListener((v) -> actionShare());
 

@@ -154,8 +154,10 @@ public class FeedActivity extends AppCompatActivity implements
     // FeedRecyclerAdapter.OnItemClickListener
     @Override
     public void onClick(int position) {
-        JobPost jobPostClicked = feedManager.getCurrentJobPosts().get(position);
-        DetailActivity.startActivity(this, jobPostClicked);
+        if (feedManager.getCurrentJobPosts().size() > position) {
+            JobPost jobPostClicked = feedManager.getCurrentJobPosts().get(position);
+            DetailActivity.startActivity(this, jobPostClicked);
+        }
     }
 
     // FeedRecyclerActivity.OnLastItemAppearedListener

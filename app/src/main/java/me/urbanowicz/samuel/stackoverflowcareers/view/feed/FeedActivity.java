@@ -1,7 +1,9 @@
 package me.urbanowicz.samuel.stackoverflowcareers.view.feed;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.IntegerRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -15,10 +17,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Collection;
 
+import me.urbanowicz.samuel.stackoverflowcareers.BuildConfig;
 import me.urbanowicz.samuel.stackoverflowcareers.R;
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPost;
 import me.urbanowicz.samuel.stackoverflowcareers.service.JobPostFeedManager;
@@ -36,6 +42,8 @@ public class FeedActivity extends AppCompatActivity implements
 
     private FeedRecyclerAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
+
+    private ExceptionInfoViewHolder exceptionInfo;
 
     private Search lastSearch;
     private JobPostFeedManager feedManager;
@@ -56,6 +64,8 @@ public class FeedActivity extends AppCompatActivity implements
         swipeRefreshLayout.setOnRefreshListener(
                 () -> feedManager.downloadFeedForNewSearch(lastSearch, this)
         );
+
+        exceptionInfo = new ExceptionInfoViewHolder((ViewGroup) findViewById(R.id.exception_info_container));
 
         feedRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         feedRecyclerView.hasFixedSize();
@@ -137,13 +147,25 @@ public class FeedActivity extends AppCompatActivity implements
     }
 
     private void setError(String info) {
-        Toast.makeText(FeedActivity.this, info, Toast.LENGTH_LONG).show();
+        if (BuildConfig.DEBUG) {
+            Toast.makeText(FeedActivity.this, info, Toast.LENGTH_LONG).show();
+        }
         Snackbar
                 .make(findViewById(R.id.coordinator), R.string.feed_general_error, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.button_label_retry, (View v) -> feedManager.downloadFeedForNewSearch(lastSearch, this))
                 .show();
 
+        exceptionInfo.setImage(getResources().getDrawable(R.drawable.ic_warning_big, null));
+        exceptionInfo.setText(getString(R.string.feed_error_label));
+        exceptionInfo.show();
     }
+
+
+    private void setEmptyLabel() {
+        exceptionInfo.setImage(getResources().getDrawable(R.drawable.ic_no_results, null));
+        exceptionInfo.setText(getString(R.string.feed_no_items_label));
+    }
+
 
     private void actionShowSearch() {
         Intent intent = new Intent(this, SearchActivity.class);
@@ -171,6 +193,11 @@ public class FeedActivity extends AppCompatActivity implements
     @Override
     public void onFeedUpdated(Collection<JobPost> jobPosts, JobPostFeedManager.MoreOfeersPossibility moreOfeersPossibility) {
         adapter.setJobPosts(jobPosts);
+        if (jobPosts.isEmpty()) {
+            setEmptyLabel();
+        } else {
+            exceptionInfo.hide();
+        }
         if (JobPostFeedManager.MoreOfeersPossibility.PROBABLE.equals(moreOfeersPossibility)) {
             adapter.setShouldShowFooterSpinner(true);
         } else {
@@ -178,9 +205,39 @@ public class FeedActivity extends AppCompatActivity implements
         }
         swipeRefreshLayout.setRefreshing(false);
     }
+
     @Override
     public void onFeedUpdateError(String errorMessage) {
         setError(errorMessage);
         swipeRefreshLayout.setRefreshing(false);
+    }
+
+    private static class ExceptionInfoViewHolder {
+        private ImageView exceptionImage;
+        private TextView exceptionText;
+        private ViewGroup container;
+
+        public ExceptionInfoViewHolder(ViewGroup container) {
+            this.container = container;
+            this.exceptionImage = (ImageView) container.findViewById(R.id.exception_info_image);
+            this.exceptionText = (TextView) container.findViewById(R.id.exception_info_text);
+            this.container.setVisibility(View.GONE);
+        }
+
+        public void setImage(Drawable drawable) {
+            exceptionImage.setImageDrawable(drawable);
+        }
+
+        public void setText(String text) {
+            exceptionText.setText(text);
+        }
+
+        public void show() {
+            container.setVisibility(View.VISIBLE);
+        }
+
+        public void hide() {
+            container.setVisibility(View.GONE);
+        }
     }
 }

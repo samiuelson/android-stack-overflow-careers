@@ -28,4 +28,6 @@
     <string name="app_name_title">Stack Overflow Careers</string>
     <string name="feed_general_error">There was error connecting to server</string>
     <string name="button_label_retry">Retry</string>
+    <string name="feed_no_items_label">No items</string>
+    <string name="feed_error_label">Error</string>
 </resources>

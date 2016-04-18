@@ -28,4 +28,9 @@
     <string name="app_name_title">Stack Overflow Careers</string>
     <string name="feed_general_error">There was error connecting to server</string>
     <string name="button_label_retry">Retry</string>
+    <string name="rating_begging_message">Do you enjoy using Stack Careers app? Please rate us on Google Play Store and share your opinion with others!</string>
+    <string name="rating_begging_title">Rating</string>
+    <string name="rating_begging_not_now_btn">Not now</string>
+    <string name="rating_begging_sure_btn">Sure!</string>
+    <string name="rating_begging_no_btn">No, don\'t ask</string>
 </resources>

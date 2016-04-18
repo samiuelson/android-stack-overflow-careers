@@ -23,6 +23,8 @@ import me.urbanowicz.samuel.stackoverflowcareers.R;
 import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPost;
 import me.urbanowicz.samuel.stackoverflowcareers.service.JobPostFeedManager;
 import me.urbanowicz.samuel.stackoverflowcareers.service.Search;
+import me.urbanowicz.samuel.stackoverflowcareers.system.PreferencesUtils;
+import me.urbanowicz.samuel.stackoverflowcareers.system.RatingDialogHelper;
 import me.urbanowicz.samuel.stackoverflowcareers.view.detail.DetailActivity;
 import me.urbanowicz.samuel.stackoverflowcareers.view.search.SearchActivity;
 
@@ -44,6 +46,9 @@ public class FeedActivity extends AppCompatActivity implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
+
+        PreferencesUtils.incrementAppStartCount(this);
+        RatingDialogHelper.showRatingBeggingDialogIfNeeded(this);
 
         setContentView(R.layout.activity_feed);
 

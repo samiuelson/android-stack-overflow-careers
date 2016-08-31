@@ -1,14 +1,14 @@
-package me.urbanowicz.samuel.stackoverflowcareers.feed;
+package me.urbanowicz.samuel.stackoverflowjobs.feed;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import me.urbanowicz.samuel.stackoverflowcareers.data.JobPost;
-import me.urbanowicz.samuel.stackoverflowcareers.data.JobPostsFeed;
-import me.urbanowicz.samuel.stackoverflowcareers.data.Search;
-import me.urbanowicz.samuel.stackoverflowcareers.service.CareersAPI;
-import me.urbanowicz.samuel.stackoverflowcareers.service.ServiceGenerator;
-import me.urbanowicz.samuel.stackoverflowcareers.service.ServiceUtils;
+import me.urbanowicz.samuel.stackoverflowjobs.data.JobPost;
+import me.urbanowicz.samuel.stackoverflowjobs.data.JobPostsFeed;
+import me.urbanowicz.samuel.stackoverflowjobs.data.Search;
+import me.urbanowicz.samuel.stackoverflowjobs.service.CareersAPI;
+import me.urbanowicz.samuel.stackoverflowjobs.service.ServiceGenerator;
+import me.urbanowicz.samuel.stackoverflowjobs.service.ServiceUtils;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;

@@ -1,11 +1,11 @@
-package me.urbanowicz.samuel.stackoverflowcareers.service;
+package me.urbanowicz.samuel.stackoverflowjobs.service;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 
-import me.urbanowicz.samuel.stackoverflowcareers.data.JobPostsFeed;
+import me.urbanowicz.samuel.stackoverflowjobs.data.JobPostsFeed;
 import retrofit.Call;
 import retrofit.Response;
 

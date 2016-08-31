@@ -1,6 +1,6 @@
-package me.urbanowicz.samuel.stackoverflowcareers.service;
+package me.urbanowicz.samuel.stackoverflowjobs.service;
 
-import me.urbanowicz.samuel.stackoverflowcareers.data.JobPostsFeed;
+import me.urbanowicz.samuel.stackoverflowjobs.data.JobPostsFeed;
 import retrofit.Call;
 import retrofit.http.GET;
 import retrofit.http.Query;

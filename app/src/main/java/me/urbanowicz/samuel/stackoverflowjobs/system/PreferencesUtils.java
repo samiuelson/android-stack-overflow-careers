@@ -1,4 +1,4 @@
-package me.urbanowicz.samuel.stackoverflowcareers.system;
+package me.urbanowicz.samuel.stackoverflowjobs.system;
 
 import android.content.Context;
 import android.content.SharedPreferences;

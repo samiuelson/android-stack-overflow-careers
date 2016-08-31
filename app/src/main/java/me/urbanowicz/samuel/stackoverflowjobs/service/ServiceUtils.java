@@ -1,6 +1,6 @@
-package me.urbanowicz.samuel.stackoverflowcareers.service;
+package me.urbanowicz.samuel.stackoverflowjobs.service;
 
-import me.urbanowicz.samuel.stackoverflowcareers.data.Search;
+import me.urbanowicz.samuel.stackoverflowjobs.data.Search;
 
 public class ServiceUtils {
 

@@ -1,4 +1,4 @@
-package me.urbanowicz.samuel.stackoverflowcareers.service;
+package me.urbanowicz.samuel.stackoverflowjobs.service;
 
 import static junit.framework.Assert.*;
 

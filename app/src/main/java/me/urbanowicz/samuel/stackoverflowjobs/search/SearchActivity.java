@@ -1,4 +1,4 @@
-package me.urbanowicz.samuel.stackoverflowcareers.search;
+package me.urbanowicz.samuel.stackoverflowjobs.search;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -23,8 +23,8 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
-import me.urbanowicz.samuel.stackoverflowcareers.R;
-import me.urbanowicz.samuel.stackoverflowcareers.data.Search;
+import me.urbanowicz.samuel.stackoverflowjobs.R;
+import me.urbanowicz.samuel.stackoverflowjobs.data.Search;
 
 public class SearchActivity extends AppCompatActivity {
 

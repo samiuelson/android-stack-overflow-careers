@@ -1,4 +1,4 @@
-package me.urbanowicz.samuel.stackoverflowcareers.system;
+package me.urbanowicz.samuel.stackoverflowjobs.system;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-import me.urbanowicz.samuel.stackoverflowcareers.R;
+import me.urbanowicz.samuel.stackoverflowjobs.R;
 
 public class RatingDialogHelper {
     private final static int APP_RUNNS_INTERVAL_BETWEEN_DIALOG = 20;

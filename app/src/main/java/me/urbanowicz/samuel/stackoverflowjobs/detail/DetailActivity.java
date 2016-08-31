@@ -1,4 +1,4 @@
-package me.urbanowicz.samuel.stackoverflowcareers.detail;
+package me.urbanowicz.samuel.stackoverflowjobs.detail;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,8 +9,8 @@ import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import me.urbanowicz.samuel.stackoverflowcareers.R;
-import me.urbanowicz.samuel.stackoverflowcareers.data.JobPost;
+import me.urbanowicz.samuel.stackoverflowjobs.R;
+import me.urbanowicz.samuel.stackoverflowjobs.data.JobPost;
 
 @Deprecated
 public class DetailActivity extends AppCompatActivity {

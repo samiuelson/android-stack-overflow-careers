@@ -1,4 +1,4 @@
-package me.urbanowicz.samuel.stackoverflowcareers;
+package me.urbanowicz.samuel.stackoverflowjobs;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

@@ -1,4 +1,4 @@
-package me.urbanowicz.samuel.stackoverflowcareers.feed;
+package me.urbanowicz.samuel.stackoverflowjobs.feed;
 
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -25,12 +25,12 @@ import android.widget.Toast;
 import java.util.Collection;
 import java.util.Collections;
 
-import me.urbanowicz.samuel.stackoverflowcareers.R;
-import me.urbanowicz.samuel.stackoverflowcareers.data.JobPost;
-import me.urbanowicz.samuel.stackoverflowcareers.data.Search;
-import me.urbanowicz.samuel.stackoverflowcareers.search.SearchActivity;
-import me.urbanowicz.samuel.stackoverflowcareers.system.PreferencesUtils;
-import me.urbanowicz.samuel.stackoverflowcareers.system.RatingDialogHelper;
+import me.urbanowicz.samuel.stackoverflowjobs.R;
+import me.urbanowicz.samuel.stackoverflowjobs.data.JobPost;
+import me.urbanowicz.samuel.stackoverflowjobs.data.Search;
+import me.urbanowicz.samuel.stackoverflowjobs.search.SearchActivity;
+import me.urbanowicz.samuel.stackoverflowjobs.system.PreferencesUtils;
+import me.urbanowicz.samuel.stackoverflowjobs.system.RatingDialogHelper;
 
 public class FeedActivity extends AppCompatActivity implements
         FeedRecyclerAdapter.OnItemClickListener, FeedRecyclerAdapter.OnLastItemAppearedListener,
@@ -174,9 +174,9 @@ public class FeedActivity extends AppCompatActivity implements
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TEXT, jobPostClicked.getJobLink().toString());
         intent.putExtra(Intent.EXTRA_SUBJECT, jobPostClicked.getJobTitle());
-        startActivity(Intent.createChooser(intent, getString(R.string.share_job_title)));
         final Bitmap shareIcon = BitmapFactory.decodeResource(getResources(), R.id.action_search);
-
+//        builder.setActionButton(shareIcon, "Share", PendingIntent.getActivity(this, 0, Intent.createChooser(intent, getString(R.string.share_job_title)), 0));
+//        builder.addMenuItem("Share", PendingIntent.getActivity(this, 0, Intent.createChooser(intent, getString(R.string.share_job_title)), 0));
         builder.setStartAnimations(this, android.R.anim.fade_in, android.R.anim.fade_out);
         builder.setExitAnimations(this, android.R.anim.fade_in, android.R.anim.fade_out);
         CustomTabsIntent customTabsIntent = builder.build();

@@ -1,4 +1,4 @@
-package me.urbanowicz.samuel.stackoverflowcareers.domain;
+package me.urbanowicz.samuel.stackoverflowcareers.data;
 
 import com.annimon.stream.Optional;
 import com.google.gson.annotations.SerializedName;

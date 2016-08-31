@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="me.urbanowicz.samuel.stackoverflowcareers.view.search.SearchActivity">
+    tools:context=".search.SearchActivity">
 
     <!-- we use this scrim view rather than a semi-opaque window background so that we can
      overlap it's enter/exit animation with content animations i.e. circular reveal/hide

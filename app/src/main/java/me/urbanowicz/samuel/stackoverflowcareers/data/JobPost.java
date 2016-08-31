@@ -1,4 +1,4 @@
-package me.urbanowicz.samuel.stackoverflowcareers.domain;
+package me.urbanowicz.samuel.stackoverflowcareers.data;
 
 import com.google.gson.annotations.SerializedName;
 

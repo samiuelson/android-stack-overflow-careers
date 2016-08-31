@@ -1,7 +1,12 @@
-package me.urbanowicz.samuel.stackoverflowcareers.view.feed;
+package me.urbanowicz.samuel.stackoverflowcareers.feed;
 
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -18,15 +23,14 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import me.urbanowicz.samuel.stackoverflowcareers.R;
-import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPost;
-import me.urbanowicz.samuel.stackoverflowcareers.service.JobPostFeedManager;
-import me.urbanowicz.samuel.stackoverflowcareers.service.Search;
+import me.urbanowicz.samuel.stackoverflowcareers.data.JobPost;
+import me.urbanowicz.samuel.stackoverflowcareers.data.Search;
+import me.urbanowicz.samuel.stackoverflowcareers.search.SearchActivity;
 import me.urbanowicz.samuel.stackoverflowcareers.system.PreferencesUtils;
 import me.urbanowicz.samuel.stackoverflowcareers.system.RatingDialogHelper;
-import me.urbanowicz.samuel.stackoverflowcareers.view.detail.DetailActivity;
-import me.urbanowicz.samuel.stackoverflowcareers.view.search.SearchActivity;
 
 public class FeedActivity extends AppCompatActivity implements
         FeedRecyclerAdapter.OnItemClickListener, FeedRecyclerAdapter.OnLastItemAppearedListener,
@@ -59,7 +63,10 @@ public class FeedActivity extends AppCompatActivity implements
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
         swipeRefreshLayout.setOnRefreshListener(
-                () -> feedManager.downloadFeedForNewSearch(lastSearch, this)
+                () -> {
+                    feedManager.downloadFeedForNewSearch(lastSearch, this);
+                    adapter.setJobPosts(Collections.EMPTY_LIST);
+                }
         );
 
         feedRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -81,7 +88,7 @@ public class FeedActivity extends AppCompatActivity implements
         if (feedManager.getCurrentSearch() != null && feedManager.getCurrentJobPosts().size() > 0) {
             refreshAdapter();
         } else {
-            swipeRefreshLayout.setRefreshing(true);
+            swipeRefreshLayout.post(() -> swipeRefreshLayout.setRefreshing(true));
             feedManager.downloadFeedForNewSearch(lastSearch, this);
         }
     }
@@ -117,7 +124,8 @@ public class FeedActivity extends AppCompatActivity implements
                 Search search = (Search) data.getSerializableExtra(SearchActivity.EXTRA_SEARCH);
                 search = search == null ? Search.EMPTY : search;
                 if (!this.lastSearch.equals(search)) {
-                    swipeRefreshLayout.setRefreshing(true);
+                    swipeRefreshLayout.post(() -> swipeRefreshLayout.setRefreshing(true));
+                    adapter.setJobPosts(Collections.EMPTY_LIST);
                     feedManager.downloadFeedForNewSearch(search, this);
                 }
                 this.lastSearch = search;
@@ -160,7 +168,19 @@ public class FeedActivity extends AppCompatActivity implements
     @Override
     public void onClick(int position) {
         JobPost jobPostClicked = feedManager.getCurrentJobPosts().get(position);
-        DetailActivity.startActivity(this, jobPostClicked);
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
+        final Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, jobPostClicked.getJobLink().toString());
+        intent.putExtra(Intent.EXTRA_SUBJECT, jobPostClicked.getJobTitle());
+        startActivity(Intent.createChooser(intent, getString(R.string.share_job_title)));
+        final Bitmap shareIcon = BitmapFactory.decodeResource(getResources(), R.id.action_search);
+
+        builder.setStartAnimations(this, android.R.anim.fade_in, android.R.anim.fade_out);
+        builder.setExitAnimations(this, android.R.anim.fade_in, android.R.anim.fade_out);
+        CustomTabsIntent customTabsIntent = builder.build();
+        customTabsIntent.launchUrl(this, Uri.parse(jobPostClicked.getJobLink().toString()));
     }
 
     // FeedRecyclerActivity.OnLastItemAppearedListener
@@ -181,6 +201,7 @@ public class FeedActivity extends AppCompatActivity implements
         }
         swipeRefreshLayout.setRefreshing(false);
     }
+
     @Override
     public void onFeedUpdateError(String errorMessage) {
         setError(errorMessage);

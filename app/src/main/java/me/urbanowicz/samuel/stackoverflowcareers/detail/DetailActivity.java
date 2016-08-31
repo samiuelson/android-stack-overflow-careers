@@ -1,4 +1,4 @@
-package me.urbanowicz.samuel.stackoverflowcareers.view.detail;
+package me.urbanowicz.samuel.stackoverflowcareers.detail;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,8 +10,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import me.urbanowicz.samuel.stackoverflowcareers.R;
-import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPost;
+import me.urbanowicz.samuel.stackoverflowcareers.data.JobPost;
 
+@Deprecated
 public class DetailActivity extends AppCompatActivity {
     private static final String EXTRA_JOB_POST = "extra_job";
 
@@ -31,8 +32,6 @@ public class DetailActivity extends AppCompatActivity {
         webView = (WebView) findViewById(R.id.web_view);
         webView.setWebViewClient(new WebViewClient());
         webView.getSettings().setJavaScriptEnabled(true);
-
-        findViewById(R.id.fab).setOnClickListener((v) -> actionShare());
 
         setupAppBarValues();
         loadContent();

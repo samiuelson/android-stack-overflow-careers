@@ -1,4 +1,4 @@
-package me.urbanowicz.samuel.stackoverflowcareers.view.feed;
+package me.urbanowicz.samuel.stackoverflowcareers.feed;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 import me.urbanowicz.samuel.stackoverflowcareers.R;
-import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPost;
+import me.urbanowicz.samuel.stackoverflowcareers.data.JobPost;
 
 
 public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

@@ -1,10 +1,14 @@
-package me.urbanowicz.samuel.stackoverflowcareers.service;
+package me.urbanowicz.samuel.stackoverflowcareers.feed;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPost;
-import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPostsFeed;
+import me.urbanowicz.samuel.stackoverflowcareers.data.JobPost;
+import me.urbanowicz.samuel.stackoverflowcareers.data.JobPostsFeed;
+import me.urbanowicz.samuel.stackoverflowcareers.data.Search;
+import me.urbanowicz.samuel.stackoverflowcareers.service.CareersAPI;
+import me.urbanowicz.samuel.stackoverflowcareers.service.ServiceGenerator;
+import me.urbanowicz.samuel.stackoverflowcareers.service.ServiceUtils;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -49,8 +53,8 @@ public class JobPostFeedManager {
 
     private void fetchJobPosts(JobPostsFeedManagerCallback callback) {
         final String searchUrl = ServiceUtils.getUrlSearchQuery(search, currentPage);
-        final JobPostFeedClient jobPostFeedClient = ServiceGenerator.createService(JobPostFeedClient.class);
-        final Call<JobPostsFeed> jobPostsFeedCall = jobPostFeedClient.getJobPostFeedCall(searchUrl, ServiceUtils.getApiKey());
+        final CareersAPI careersAPI = ServiceGenerator.createService(CareersAPI.class);
+        final Call<JobPostsFeed> jobPostsFeedCall = careersAPI.getJobPostFeedCall(searchUrl, ServiceUtils.getApiKey());
         jobPostsFeedCall.enqueue(new Callback<JobPostsFeed>() {
             @Override
             public void onResponse(Response<JobPostsFeed> response, Retrofit retrofit) {

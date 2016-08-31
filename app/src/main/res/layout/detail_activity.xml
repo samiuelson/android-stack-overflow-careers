@@ -5,48 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".view.detail.DetailActivity">
+    tools:context=".detail.DetailActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/app_bar_height"
-        android:fitsSystemWindows="true"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/toolbar_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            app:collapsedTitleTextAppearance="@style/CollapsedAppbar"
-            app:contentScrim="?attr/colorPrimary"
-            app:expandedTitleMarginEnd="16dp"
-            app:expandedTitleMarginStart="16dp"
-            app:expandedTitleTextAppearance="@style/ExpanedAppbar"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+        android:fitsSystemWindows="true" >
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-        </android.support.design.widget.CollapsingToolbarLayout>
-
+                app:layout_collapseMode="pin" />
 
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_detail" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_share"
-        app:layout_anchor="@id/app_bar"
-        app:layout_anchorGravity="bottom|end" />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -1,5 +1,7 @@
 package me.urbanowicz.samuel.stackoverflowcareers.service;
 
+import me.urbanowicz.samuel.stackoverflowcareers.data.Search;
+
 public class ServiceUtils {
 
     public static String getApiKey() {

@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import me.urbanowicz.samuel.stackoverflowcareers.domain.JobPostsFeed;
+import me.urbanowicz.samuel.stackoverflowcareers.data.JobPostsFeed;
 import retrofit.Call;
 import retrofit.Response;
 
@@ -13,11 +13,11 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 public class JobPostClientTest {
-    JobPostFeedClient client;
+    CareersAPI client;
 
     @Before public void
     setup() {
-        client = ServiceGenerator.createService(JobPostFeedClient.class);
+        client = ServiceGenerator.createService(CareersAPI.class);
     }
 
     @Test public void
